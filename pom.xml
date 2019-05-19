@@ -11,6 +11,7 @@
 
     <modules>
         <!-- Core -->
+        <module>api</module>
         <module>ui</module>
     </modules>
 
@@ -18,14 +19,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <bluecove.version>2.1.0</bluecove.version>
-        <dorkbox.version>3.12</dorkbox.version>
-        <jackson.version>2.9.7</jackson.version>
+        <jackson.version>2.9.8</jackson.version>
         <jinjava.version>2.4.12</jinjava.version>
         <jssc.version>2.8.0</jssc.version>
         <kotlin.version>1.3.11</kotlin.version>
-        <retrofit.version>2.3.0</retrofit.version>
-        <rxjava.version>2.1.6</rxjava.version>
-        <rxkotlin.version>2.3.0</rxkotlin.version>
         <slf4j.version>1.7.21</slf4j.version>
     </properties>
 
@@ -33,12 +30,12 @@
         <dependencies>
             <!-- Own -->
             <dependency>
-                <groupId>com.poterion.monitor</groupId>
+                <groupId>com.poterion.bluetooth</groupId>
                 <artifactId>api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.poterion.monitor</groupId>
+                <groupId>com.poterion.bluetooth</groupId>
                 <artifactId>ui</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -61,21 +58,6 @@
             </dependency>
             <!-- 3rd Party -->
             <dependency>
-                <groupId>com.dorkbox</groupId>
-                <artifactId>SystemTray</artifactId>
-                <version>${dorkbox.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.squareup.retrofit2</groupId>
-                <artifactId>retrofit</artifactId>
-                <version>${retrofit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.squareup.retrofit2</groupId>
-                <artifactId>converter-jackson</artifactId>
-                <version>${retrofit.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
                 <version>${jackson.version}</version>
@@ -94,34 +76,6 @@
                 <groupId>com.hubspot.jinjava</groupId>
                 <artifactId>jinjava</artifactId>
                 <version>${jinjava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.reactivex.rxjava2</groupId>
-                <artifactId>rxjava</artifactId>
-                <version>${rxjava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.reactivex.rxjava2</groupId>
-                <artifactId>rxkotlin</artifactId>
-                <version>${rxkotlin.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-stdlib</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-stdlib-common</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-stdlib-jdk8</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-reflect</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency><!-- https://mvnrepository.com/artifact/org.scream3r/jssc -->
                 <groupId>org.scream3r</groupId>
@@ -168,10 +122,6 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.dorkbox</groupId>
-            <artifactId>SystemTray</artifactId>
         </dependency>
         <!-- Logging -->
         <dependency>
