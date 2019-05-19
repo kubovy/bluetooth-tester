@@ -6,7 +6,7 @@ package com.poterion.monitor.api.communication
  * @param code Code of the message type.
  * @author Jan Kubovy <jan@kubovy.eu>
  */
-enum class BluetoothMessageKind(final override var code: Int, override val delay: Long? = null) : MessageKind {
+enum class BluetoothMessageKind(override var code: Int, override val delay: Long? = null) : MessageKind {
 	/** Cyclic redundancy check message */
 	CRC(0x00),
 	/** ID of device message */
@@ -16,10 +16,12 @@ enum class BluetoothMessageKind(final override var code: Int, override val delay
 	SETTINGS(0x03),
 	IO(0x10),
 	DHT11(0x11),
-	PIR(0x12),
-	LCD(0x20),
-	RGB(0x30),
-	WS281x(0x40),
+	LCD(0x12),
+	MCP23017(0x13),
+	PIR(0x14),
+	RGB(0x15),
+	WS281x(0x16),
+	WS281xLIGHT(0x17),
 	SM_CONFIGURATION(0x80),
 	SM_PULL(0x81),
 	SM_PUSH(0x82),

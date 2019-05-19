@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -14,41 +15,47 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.poterion.bluetooth.tester.Controller">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1040.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.poterion.bluetooth.tester.Controller">
    <top>
-      <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="5.0">
+      <GridPane alignment="TOP_CENTER" hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" vgap="5.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="NEVER" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="NEVER" />
+          <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
+            <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="NEVER" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="NEVER" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="NEVER" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="NEVER" />
-          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="NEVER" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
-            <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="-Infinity" vgrow="ALWAYS" />
+            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="-Infinity" vgrow="ALWAYS" />
         </rowConstraints>
          <children>
             <Button fx:id="buttonConnect" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onConnectionToggle" text="Connect [Ctrl+C]" GridPane.columnIndex="2" GridPane.rowSpan="2" />
             <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <Label fx:id="labelStatus" maxWidth="1.7976931348623157E308" minWidth="200.0" text="Not Connected">
+                  <Label fx:id="labelStatus" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" text="Not Connected">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
@@ -56,7 +63,7 @@
                   <ProgressBar fx:id="progressBluetooth" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-            <Label maxWidth="1.7976931348623157E308" text="Status" GridPane.rowIndex="1">
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Status" GridPane.rowIndex="1">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -64,25 +71,25 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <HBox GridPane.columnIndex="1" GridPane.rowIndex="15">
+            <HBox GridPane.columnIndex="1" GridPane.rowIndex="20">
                <children>
-                  <ComboBox fx:id="comboTxMessageType" editable="true" prefWidth="150.0" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="textTxMessageType" promptText="0x00" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="textTxCRC" editable="false" prefWidth="50.0" promptText="0x00" />
+                  <ComboBox fx:id="comboTxMessageType" editable="true" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="textTxMessageType" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" promptText="0x00" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="textTxCRC" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="50.0" promptText="0x00" HBox.hgrow="NEVER" />
                </children>
             </HBox>
-            <TextArea fx:id="areaTxMessage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="0x1E T e s t  i n  A S C I I ..." GridPane.columnIndex="1" GridPane.rowIndex="16" GridPane.vgrow="ALWAYS">
+            <TextArea fx:id="areaTxMessage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" promptText="0x1E T e s t  i n  A S C I I ..." GridPane.columnIndex="1" GridPane.rowIndex="21" GridPane.vgrow="ALWAYS">
                <font>
                   <Font name="Monospaced Regular" size="10.0" />
                </font>
             </TextArea>
-            <TextArea fx:id="areaRxMessage" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="17" GridPane.vgrow="ALWAYS">
+            <TextArea fx:id="areaRxMessage" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" promptText="No logs yet" GridPane.columnIndex="1" GridPane.rowIndex="22" GridPane.vgrow="ALWAYS">
                <font>
                   <Font name="Monospaced Regular" size="10.0" />
                </font>
             </TextArea>
-            <Button fx:id="buttonTxSend" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onTxSend" text="Send [Ctrl+Enter]" GridPane.columnIndex="2" GridPane.rowIndex="15" />
-            <Label maxWidth="1.7976931348623157E308" text="TX" GridPane.rowIndex="15">
+            <Button fx:id="buttonTxSend" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onTxSend" text="Send [Ctrl+Enter]" GridPane.columnIndex="2" GridPane.rowIndex="20" />
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="TX" GridPane.rowIndex="20">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -93,7 +100,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <Label maxWidth="1.7976931348623157E308" text="RX" GridPane.rowIndex="17" GridPane.valignment="TOP">
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="RX" GridPane.rowIndex="22" GridPane.valignment="TOP">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -101,8 +108,8 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <Button fx:id="buttonRxClear" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRxClear" text="Clear [C]" GridPane.columnIndex="2" GridPane.rowIndex="17" GridPane.valignment="TOP" />
-            <Label text="Address:">
+            <Button fx:id="buttonRxClear" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRxClear" text="Clear [C]" GridPane.columnIndex="2" GridPane.rowIndex="22" GridPane.valignment="TOP" />
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Address:">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -116,7 +123,7 @@
             <HBox GridPane.columnIndex="1">
                <children>
                   <TextField fx:id="textBluetoothAddress" promptText="00:00:00:00:00:00" HBox.hgrow="ALWAYS" />
-                  <Label text="Channel:">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Channel:">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
@@ -124,7 +131,7 @@
                   <TextField fx:id="textBluetoothChannel" maxWidth="40.0" promptText="6" />
                </children>
             </HBox>
-            <Label text="Settings" GridPane.rowIndex="3">
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Settings" GridPane.rowIndex="3">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -134,26 +141,26 @@
             </Label>
             <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3">
               <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
                 <ColumnConstraints hgrow="NEVER" maxWidth="70.0" minWidth="70.0" prefWidth="70.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="120.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Name">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Name">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label text="PIN" GridPane.columnIndex="1">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="PIN" GridPane.columnIndex="1">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label text="Pairing Method" GridPane.columnIndex="2">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Pairing Method" GridPane.columnIndex="2">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
@@ -169,7 +176,7 @@
                   <Button fx:id="buttonSettingsSet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onBluetoothSettingsSet" text="Set" HBox.hgrow="SOMETIMES" />
                </children>
             </HBox>
-            <Label text="RGB" GridPane.rowIndex="11">
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="RGB" GridPane.rowIndex="15">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -177,7 +184,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <Label text="DHT11" GridPane.rowIndex="5">
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="DHT11" GridPane.rowIndex="5">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -185,7 +192,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <Label text="PIR" GridPane.rowIndex="9">
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="PIR" GridPane.rowIndex="13">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -193,7 +200,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <Label text="WS281x" GridPane.rowIndex="13">
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="WS281x" GridPane.rowIndex="17">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -201,7 +208,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <Label text="IOs" GridPane.rowIndex="7">
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="IOs" GridPane.rowIndex="7">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -211,22 +218,22 @@
             </Label>
             <Button fx:id="buttonDHT11Get" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onDHT11Get" text="Get" GridPane.columnIndex="2" GridPane.rowIndex="5" />
             <Button fx:id="buttonIOsGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onIOsGet" text="Get" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-            <Button fx:id="buttonPIRGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPIRGet" text="Get" GridPane.columnIndex="2" GridPane.rowIndex="9" />
-            <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="11">
+            <Button fx:id="buttonPIRGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPIRGet" text="Get" GridPane.columnIndex="2" GridPane.rowIndex="13" />
+            <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="15">
                <children>
                   <Button fx:id="buttonRGBGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRGBGet" text="Get" HBox.hgrow="SOMETIMES" />
                   <Button fx:id="buttonRGBSet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRGBSet" text="Set" HBox.hgrow="SOMETIMES" />
                </children>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" GridPane.columnIndex="1" GridPane.rowIndex="5">
                <children>
-                  <Label alignment="CENTER_RIGHT" text="Temperature:">
+                  <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Temperature:">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <TextField fx:id="textDHT11Temperature" editable="false" />
-                  <Label text="°C">
+                  <TextField fx:id="textDHT11Temperature" alignment="CENTER_RIGHT" editable="false" promptText="?" />
+                  <Label maxWidth="1.7976931348623157E308" text="°C">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
@@ -236,64 +243,64 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <TextField fx:id="textDHT11Humidity" editable="false" />
-                  <Label text="\%">
+                  <TextField fx:id="textDHT11Humidity" alignment="CENTER_RIGHT" editable="false" promptText="?" />
+                  <Label maxWidth="1.7976931348623157E308" text="\%">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
                </children>
             </HBox>
-            <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="11">
+            <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="15">
                <columnConstraints>
-                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="100.0" />
-                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="100.0" />
-                  <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                  <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                  <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                  <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <ComboBox fx:id="comboRGBPattern" maxWidth="1.7976931348623157E308" minWidth="100.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                  <Label maxWidth="1.7976931348623157E308" text="Pattern">
+                  <ComboBox fx:id="comboRGBPattern" maxWidth="1.7976931348623157E308" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Pattern">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label maxWidth="1.7976931348623157E308" text="Color" GridPane.columnIndex="1">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Color" GridPane.columnIndex="1">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label maxWidth="1.7976931348623157E308" text="Delay" GridPane.columnIndex="2">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Delay" GridPane.columnIndex="2">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label maxWidth="1.7976931348623157E308" text="Min" GridPane.columnIndex="3" GridPane.hgrow="NEVER">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Min" GridPane.columnIndex="3" GridPane.hgrow="NEVER">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label maxWidth="1.7976931348623157E308" text="Max" GridPane.columnIndex="4" GridPane.hgrow="NEVER">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Max" GridPane.columnIndex="4" GridPane.hgrow="NEVER">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label maxWidth="1.7976931348623157E308" text="Count" GridPane.columnIndex="5">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Count" GridPane.columnIndex="5">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <ColorPicker fx:id="colorRGB" maxWidth="1.7976931348623157E308" minWidth="100.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                  <ColorPicker fx:id="colorRGB" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
                   <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
                         <TextField fx:id="textRGBDelay" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="75.0" promptText="50" HBox.hgrow="SOMETIMES" />
-                        <Label minWidth="30.0" text="ms" HBox.hgrow="ALWAYS">
+                        <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="ms" HBox.hgrow="ALWAYS">
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
@@ -305,53 +312,53 @@
                   <TextField fx:id="textRGBCount" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="80.0" promptText="Indefined" GridPane.columnIndex="5" GridPane.rowIndex="1" />
                </children>
             </GridPane>
-            <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="10" />
+            <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="14" />
             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
             <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4" />
             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="6" />
-            <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="8" />
-            <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="12" />
-            <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="14" />
-            <GridPane GridPane.columnIndex="1" GridPane.rowIndex="13">
+            <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="10" />
+            <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="16" />
+            <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="19" />
+            <GridPane GridPane.columnIndex="1" GridPane.rowIndex="17">
               <columnConstraints>
-                <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                  <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
-                  <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label maxWidth="1.7976931348623157E308" text="Pattern" GridPane.columnIndex="1">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Pattern" GridPane.columnIndex="1">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label maxWidth="1.7976931348623157E308" text="Color" GridPane.columnIndex="2">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Color" GridPane.columnIndex="2">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label text="LED">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="LED">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label maxWidth="1.7976931348623157E308" text="Delay" GridPane.columnIndex="3">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Delay" GridPane.columnIndex="3">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label maxWidth="1.7976931348623157E308" text="Min" GridPane.columnIndex="4">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Min" GridPane.columnIndex="4">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <Label maxWidth="1.7976931348623157E308" text="Max" GridPane.columnIndex="5">
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Max" GridPane.columnIndex="5">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
@@ -366,19 +373,512 @@
                         </Label>
                      </children>
                   </HBox>
-                  <TextField fx:id="textWS281xMin" maxWidth="40.0" minWidth="40.0" promptText="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                  <TextField fx:id="textWS281xMax" maxWidth="40.0" minWidth="40.0" promptText="255" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                  <TextField fx:id="textWS281xMin" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" promptText="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                  <TextField fx:id="textWS281xMax" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" promptText="255" GridPane.columnIndex="5" GridPane.rowIndex="1" />
                   <ColorPicker fx:id="colorWS281x" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <ComboBox fx:id="comboWS281xPattern" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id="textWS281xLED" maxWidth="40.0" minWidth="40.0" promptText="All" GridPane.rowIndex="1" />
+                  <TextField fx:id="textWS281xLED" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="40.0" promptText="All" GridPane.rowIndex="1" />
                </children>
             </GridPane>
-            <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="13">
+            <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="17">
                <children>
                   <Button fx:id="buttonWS281xGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onWS281xGet" text="Get" HBox.hgrow="SOMETIMES" />
                   <Button fx:id="buttonWS281xSet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onWS281xSet" text="Set" HBox.hgrow="SOMETIMES" />
                </children>
             </HBox>
+            <Label fx:id="labelPIR" maxWidth="1.7976931348623157E308" text="No update yet." GridPane.columnIndex="1" GridPane.rowIndex="13">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </Label>
+            <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="12" />
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="MCP23017" GridPane.rowIndex="11">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+            <GridPane GridPane.columnIndex="1" GridPane.rowIndex="11">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+              </rowConstraints>
+               <children>
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="I2C Address" GridPane.rowSpan="2">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <TextField fx:id="textMCP23017Address" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minWidth="-Infinity" promptText="0x27" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017A07" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017A06" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017A05" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017A04" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017A03" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017A02" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017A01" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017A00" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <Label fx:id="labelMCP23017A07" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <CheckBox fx:id="checkboxMCP23017B07" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017B06" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="12" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017B05" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017B04" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="14" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017B03" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="15" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017B02" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="16" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017B01" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="17" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="checkboxMCP23017B00" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="18" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <Label fx:id="labelMCP23017A06" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017A05" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017A04" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017A03" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017A02" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017A01" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017A00" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017B07" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017B06" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="12" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017B05" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017B04" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="14" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017B03" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="15" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017B02" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="16" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017B01" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="17" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="labelMCP23017B00" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0" GridPane.columnIndex="18" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Port A" GridPane.columnIndex="2" GridPane.columnSpan="8">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Port B" GridPane.columnIndex="11" GridPane.columnSpan="8">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Separator maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.rowSpan="2147483647" />
+                  <Separator maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowSpan="2147483647" />
+               </children>
+            </GridPane>
+            <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="11">
+               <children>
+                  <Button fx:id="buttonMCP23017Get" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMCP23017Get" text="Get" HBox.hgrow="SOMETIMES" />
+                  <Button fx:id="buttonMCP23017Set" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMCP23017Set" text="Set" HBox.hgrow="SOMETIMES" />
+               </children>
+            </HBox>
+            <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="8" />
+            <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="LCD" GridPane.rowIndex="9">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </Label>
+            <GridPane GridPane.columnIndex="1" GridPane.rowIndex="9">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+               </rowConstraints>
+               <children>
+                  <TextArea fx:id="areaLCD" prefHeight="75.0" GridPane.columnIndex="1" GridPane.rowSpan="2147483647">
+                     <font>
+                        <Font name="Monospaced Regular" size="13.0" />
+                     </font>
+                  </TextArea>
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Line" GridPane.valignment="BOTTOM">
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
+                  </Label>
+                  <TextField fx:id="textLCDLine" alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" promptText="All lines" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets right="5.0" />
+                     </GridPane.margin>
+                  </TextField>
+                  <CheckBox fx:id="checkboxLCDBacklight" indeterminate="true" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onLCDBacklight" text="Backlight" GridPane.rowIndex="2">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </CheckBox>
+               </children>
+            </GridPane>
+            <GridPane GridPane.columnIndex="2" GridPane.rowIndex="9">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="1.7976931348623157E308" minHeight="-Infinity" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="1.7976931348623157E308" minHeight="-Infinity" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Button fx:id="buttonLCDGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onLCDGet" text="Get" />
+                  <Button fx:id="buttonLCDSet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onLCDSet" text="Set" GridPane.columnIndex="1" />
+                  <Button fx:id="buttonLCDClear" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onLCDClear" text="Clear" GridPane.rowIndex="1" />
+                  <Button fx:id="buttonLCDReset" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onLCDReset" text="Reset" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+            <GridPane GridPane.columnIndex="1" GridPane.rowIndex="18">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Circle fx:id="circleWS281x49" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x48" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x47" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x46" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x45" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x44" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x43" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x42" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x41" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x40" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x31" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x30" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x32" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x33" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x34" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x35" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x36" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x37" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x38" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x39" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x29" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x28" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x27" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x26" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x25" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x24" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x23" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x22" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x21" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x20" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x19" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x18" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x17" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x16" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x15" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x14" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x13" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x12" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x11" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x10" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x09" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="9" GridPane.halignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x08" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="8" GridPane.halignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x07" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="7" GridPane.halignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x06" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="6" GridPane.halignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x05" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="5" GridPane.halignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x04" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="4" GridPane.halignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x03" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="3" GridPane.halignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x02" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="2" GridPane.halignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x01" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+                  <Circle fx:id="circleWS281x00" fill="DODGERBLUE" onMouseClicked="#onWS281xLED" radius="10.0" stroke="BLACK" strokeType="INSIDE" GridPane.halignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </GridPane.margin>
+                  </Circle>
+               </children>
+            </GridPane>
          </children>
          <opaqueInsets>
             <Insets />
