@@ -23,14 +23,15 @@ interface BluetoothListener {
 	 *
 	 * @param message Received message
 	 */
-	fun onMessage(message: ByteArray) {
+	fun onMessageReceived(message: ByteArray) {
 	}
 
 	/**
 	 * On message sent callback.
 	 *
+	 * @param message Sent raw message
 	 * @param remaining Remaining message count in the queue.
 	 */
-	fun onMessageSent(remaining: Int) {
+	fun onMessageSent(message: ByteArray, remaining: Int) {
 	}
 }

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.lang.RuntimeException
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
 import javax.bluetooth.DiscoveryAgent
@@ -16,9 +15,6 @@ import javax.microedition.io.StreamConnection
 
 /**
  * Bluetooth communicator, embedded version.
- *
- * @param address Address of the target bluetooth device to connect to.
- * @param shouldConnect Whether connection should be established or not.
  *
  * @author Jan Kubovy <jan@kubovy.eu>
  */
@@ -118,14 +114,15 @@ object BluetoothCommunicator {
 			while (!Thread.interrupted() && isConnected) {
 				if (chksumQueue.isNotEmpty()) {
 					val chksum = chksumQueue.poll()
-					var data = listOf(BluetoothMessageKind.CRC.byteCode, chksum).toByteArray()
-					data = listOf(data.calculateChecksum().toByte(), BluetoothMessageKind.CRC.byteCode, chksum).toByteArray()
+					var data = listOf(BluetoothMessageKind.CRC.code.toByte(), chksum).toByteArray()
+					data = listOf(data.calculateChecksum().toByte(), BluetoothMessageKind.CRC.code.toByte(), chksum).toByteArray()
 					outputStream?.write(data)
 					outputStream?.flush()
 					LOGGER.debug("Outbound CRC: ${"0x%02X".format(chksum)} (${chksumQueue.size})")
+					listeners.forEach { Platform.runLater { it.onMessageSent(data, messageQueue.size) } }
 				} else if (messageQueue.isNotEmpty()) {
 					val (message, delay) = messageQueue.peek()
-					val kind = BluetoothMessageKind.values().find { it.byteCode == message[0] }
+					val kind = BluetoothMessageKind.values().find { it.code.toByte() == message[0] }
 					val checksum = message.calculateChecksum()
 					val data = listOf(checksum.toByte(), *message.toTypedArray()).toByteArray()
 					lastChecksum = null
@@ -145,7 +142,7 @@ object BluetoothCommunicator {
 								" ${data.joinToString(" ") { "0x%02X".format(it) }}" +
 								" (remaining: ${messageQueue.size})")
 						if (correctlyReceived) {
-							listeners.forEach { Platform.runLater { it.onMessageSent(messageQueue.size) } }
+							listeners.forEach { Platform.runLater { it.onMessageSent(data, messageQueue.size) } }
 							lastChecksum = null
 						}
 					} else {
@@ -178,7 +175,7 @@ object BluetoothCommunicator {
 
 					if (chksum == chksumReceived) {
 						val messageKind = buffer[1]
-								.let { byte -> BluetoothMessageKind.values().find { it.byteCode == byte } }
+								.let { byte -> BluetoothMessageKind.values().find { it.code.toByte() == byte } }
 								?: BluetoothMessageKind.UNKNOWN
 
 						if (messageKind != BluetoothMessageKind.CRC) chksumQueue.add(chksum.toByte())
@@ -189,7 +186,7 @@ object BluetoothCommunicator {
 								LOGGER.debug("Inbound: CRC: ${"0x%02X".format(lastChecksum)}")
 							}
 							else -> {
-								listeners.forEach { Platform.runLater { it.onMessage(buffer.copyOfRange(0, read)) } }
+								listeners.forEach { Platform.runLater { it.onMessageReceived(buffer.copyOfRange(0, read)) } }
 							}
 						}
 					}
@@ -286,7 +283,7 @@ object BluetoothCommunicator {
 			.let { data ->
 				ByteArray(data.size + 1) { i ->
 					when (i) {
-						0 -> kind.byteCode
+						0 -> kind.code.toByte()
 						else -> data[i - 1]
 					}
 				}.also { messageQueue.offer(it to kind.delay) }

@@ -30,6 +30,4 @@ enum class BluetoothMessageKind(override var code: Int, override val delay: Long
 	SM_ACTION(0x85),
 	/** Unknown message */
 	UNKNOWN(0xFF);
-
-	override val byteCode = code.toByte()
 }
