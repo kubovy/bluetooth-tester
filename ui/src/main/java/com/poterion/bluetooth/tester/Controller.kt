@@ -9,6 +9,7 @@ import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import jssc.SerialPortList
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,18 +21,27 @@ import kotlin.math.min
  *
  * @author Jan Kubovy <jan@kubovy.eu>
  */
-class Controller : BluetoothListener {
+class Controller : CommunicatorListener {
 	companion object {
 		internal fun getRoot(): Parent = FXMLLoader(Controller::class.java.getResource("main.fxml"))
 				.let { it.load<Parent>() to it.getController<Controller>() }
 				.let { (root, _) -> root }
 	}
 
+	@FXML private lateinit var connection: ToggleGroup
+
+	@FXML private lateinit var radioUSB: RadioButton
+	@FXML private lateinit var choiceUSBPort: ChoiceBox<String>
+	@FXML private lateinit var labelUSBStatus: Label
+	@FXML private lateinit var progressUSB: ProgressBar
+	@FXML private lateinit var buttonUSBConnect: Button
+
+	@FXML private lateinit var radioBluetooth: RadioButton
 	@FXML private lateinit var textBluetoothAddress: TextField
 	@FXML private lateinit var textBluetoothChannel: TextField
-	@FXML private lateinit var labelStatus: Label
+	@FXML private lateinit var labelBluetoothStatus: Label
 	@FXML private lateinit var progressBluetooth: ProgressBar
-	@FXML private lateinit var buttonConnect: Button
+	@FXML private lateinit var buttonBluetoothConnect: Button
 
 	@FXML private lateinit var textBluetoothName: TextField
 	@FXML private lateinit var textBluetoothPin: TextField
@@ -354,6 +364,9 @@ class Controller : BluetoothListener {
 
 	@FXML
 	fun initialize() {
+		choiceUSBPort.items.addAll(SerialPortList.getPortNames())
+		choiceUSBPort.selectionModel.select(0)
+
 		comboBluetoothPairingMethod.items.addAll(PairingMethod.values())
 		comboBluetoothPairingMethod.selectionModel.select(0)
 
@@ -452,32 +465,46 @@ class Controller : BluetoothListener {
 				.addListener { _, _, value -> value?.toIntOrNull()?.let { ws281xLights[it] }?.also { setWS281xLight(it) } }
 
 		textBluetoothAddress.text = "34:81:F4:1A:4B:29"
+		USBCommunicator.register(this)
 		BluetoothCommunicator.register(this)
 		enabled = false
 	}
 
 	@FXML
-	fun onConnectionToggle() {
+	fun onUSBConnectionToggle() {
+		if (USBCommunicator.isConnected) {
+			USBCommunicator.disconnect()
+			buttonUSBConnect.text = "Connect"
+		} else {
+			choiceUSBPort.value
+					?.let { USBCommunicator.connect(it) }
+					?.takeIf { it }
+					?.also { buttonUSBConnect.text = "Cancel" }
+		}
+	}
+
+	@FXML
+	fun onBluetoothConnectionToggle() {
 		if (BluetoothCommunicator.isConnected || BluetoothCommunicator.isConnecting) {
 			BluetoothCommunicator.disconnect()
-			buttonConnect.text = "Connect [Ctrl+C]"
+			buttonBluetoothConnect.text = "Connect"
 		} else {
 			(textBluetoothChannel.text.toIntOrNull() ?: 6)
 					.let { channel -> BluetoothCommunicator.connect(textBluetoothAddress.text, channel) }
 					.takeIf { it }
-					?.also { buttonConnect.text = "Cancel [Ctrl+C]" }
+					?.also { buttonBluetoothConnect.text = "Cancel" }
 		}
 	}
 
 	@FXML
 	fun onBluetoothSettingsGet() {
 		//settingsEnabled = false
-		BluetoothMessageKind.SETTINGS.sendGetRequest()
+		MessageKind.SETTINGS.sendGetRequest()
 	}
 
 	@FXML
 	fun onBluetoothSettingsSet() {
-		BluetoothMessageKind.SETTINGS.sendConfiguration(
+		MessageKind.SETTINGS.sendConfiguration(
 				*(listOf(comboBluetoothPairingMethod.selectionModel.selectedIndex)
 						+ textBluetoothPin.text.padEnd(6, 0.toChar()).substring(0, 6).map { it.toInt() }
 						+ textBluetoothName.text.padEnd(16, 0.toChar()).substring(0, 16).map { it.toInt() }).toTypedArray())
@@ -486,13 +513,13 @@ class Controller : BluetoothListener {
 	@FXML
 	fun onDHT11Get() {
 		//dht11Enabled = false
-		BluetoothMessageKind.DHT11.sendGetRequest()
+		MessageKind.DHT11.sendGetRequest()
 	}
 
 	@FXML
 	fun onLCDGet() {
 		//lcdEnabled = false
-		BluetoothMessageKind.LCD.sendGetRequest(textLCDLine.text.toIntOrNull())
+		MessageKind.LCD.sendGetRequest(textLCDLine.text.toIntOrNull())
 	}
 
 	@FXML
@@ -505,22 +532,22 @@ class Controller : BluetoothListener {
 				.mapIndexed { line, data -> line to data }
 				.filter { (line, _) -> line == (textLCDLine.text.toIntOrNull() ?: line) }
 				.toList()
-				.forEach { (line, data) -> BluetoothMessageKind.LCD.sendConfiguration(line, data.size, *data) }
+				.forEach { (line, data) -> MessageKind.LCD.sendConfiguration(line, data.size, *data) }
 	}
 
 	@FXML
 	fun onLCDBacklight() {
-		BluetoothMessageKind.LCD.sendConfiguration(if (checkboxLCDBacklight.isSelected) 0x7E else 0x7D)
+		MessageKind.LCD.sendConfiguration(if (checkboxLCDBacklight.isSelected) 0x7E else 0x7D)
 	}
 
 	@FXML
 	fun onLCDClear() {
-		BluetoothMessageKind.LCD.sendConfiguration(0x7B)
+		MessageKind.LCD.sendConfiguration(0x7B)
 	}
 
 	@FXML
 	fun onLCDReset() {
-		BluetoothMessageKind.LCD.sendConfiguration(0x7C)
+		MessageKind.LCD.sendConfiguration(0x7C)
 	}
 
 	@FXML
@@ -532,7 +559,7 @@ class Controller : BluetoothListener {
 				?.groupValues
 				?.get(1)
 				?.toInt(16)
-				.also { BluetoothMessageKind.MCP23017.sendGetRequest(it ?: 0x20) }
+				.also { MessageKind.MCP23017.sendGetRequest(it ?: 0x20) }
 	}
 
 	@FXML
@@ -563,27 +590,27 @@ class Controller : BluetoothListener {
 					checkboxMCP23017B01.isSelected,
 					checkboxMCP23017B00.isSelected))
 
-			BluetoothMessageKind.MCP23017.sendConfiguration(*params.toTypedArray())
+			MessageKind.MCP23017.sendConfiguration(*params.toTypedArray())
 		}
 	}
 
 	@FXML
 	fun onPIRGet() {
 		//pirEnabled = false
-		BluetoothMessageKind.PIR.sendGetRequest()
+		MessageKind.PIR.sendGetRequest()
 	}
 
 	@FXML
 	fun onRGBGet() {
 		//rgbEnabled = false
 		val item = comboRGBItem.value?.toIntOrNull()
-		BluetoothMessageKind.RGB.sendGetRequest(item)
+		MessageKind.RGB.sendGetRequest(item)
 	}
 
 	@FXML
 	fun onRGBAdd() {
 		val pattern = comboRGBPattern.selectionModel.selectedItem
-		BluetoothMessageKind.RGB.sendConfiguration(
+		MessageKind.RGB.sendConfiguration(
 				pattern.code,
 				colorRGB.value.red * 255.0,
 				colorRGB.value.green * 255.0,
@@ -598,7 +625,7 @@ class Controller : BluetoothListener {
 	@FXML
 	fun onRGBSet() {
 		val pattern = comboRGBPattern.selectionModel.selectedItem
-		BluetoothMessageKind.RGB.sendConfiguration(
+		MessageKind.RGB.sendConfiguration(
 				pattern.code + 0x80,
 				colorRGB.value.red * 255.0,
 				colorRGB.value.green * 255.0,
@@ -614,19 +641,19 @@ class Controller : BluetoothListener {
 	fun onWS281xGet() {
 		//ws281xEnabled = false
 		val led = textWS281xLED.text.toIntOrNull()
-		BluetoothMessageKind.WS281x.sendGetRequest(led)
+		MessageKind.WS281x.sendGetRequest(led)
 	}
 
 	@FXML
 	fun onWS281xSet() {
 		val led = textWS281xLED.text.toIntOrNull()
 		if (led == null) {
-			BluetoothMessageKind.WS281x.sendConfiguration(
+			MessageKind.WS281x.sendConfiguration(
 					colorWS281x.value.red * 255.0,
 					colorWS281x.value.green * 255.0,
 					colorWS281x.value.blue * 255.0)
 		} else {
-			BluetoothMessageKind.WS281x.sendConfiguration(
+			MessageKind.WS281x.sendConfiguration(
 					led,
 					comboWS281xPattern.selectionModel.selectedItem.code,
 					colorWS281x.value.red * 255.0,
@@ -657,14 +684,14 @@ class Controller : BluetoothListener {
 	fun onWS281xLightGet() {
 		//ws281xLightEnabled = false
 		val item = comboWS281xLightItem.value?.toIntOrNull()
-		BluetoothMessageKind.WS281xLIGHT.sendGetRequest(item)
+		MessageKind.WS281xLIGHT.sendGetRequest(item)
 	}
 
 	@FXML
 	fun onWS281xLightAdd() {
 		val pattern = comboWS281xLightPattern.selectionModel.selectedItem
 		val rainbow = choiceWS281xLightRainbow.selectionModel.selectedIndex
-		BluetoothMessageKind.WS281xLIGHT.sendConfiguration(
+		MessageKind.WS281xLIGHT.sendConfiguration(
 				pattern.code,
 				if (rainbow == 0) colorWS281xLight1.value.red * 255.0 else 0x01,
 				if (rainbow == 0) colorWS281xLight1.value.green * 255.0 else 0x02,
@@ -700,7 +727,7 @@ class Controller : BluetoothListener {
 	fun onWS281xLightSet() {
 		val pattern = comboWS281xLightPattern.selectionModel.selectedItem
 		val rainbow = choiceWS281xLightRainbow.selectionModel.selectedIndex
-		BluetoothMessageKind.WS281xLIGHT.sendConfiguration(
+		MessageKind.WS281xLIGHT.sendConfiguration(
 				pattern.code + 0x80,
 				if (rainbow == 0) colorWS281xLight1.value.red * 255.0 else 0x01,
 				if (rainbow == 0) colorWS281xLight1.value.green * 255.0 else 0x02,
@@ -752,7 +779,7 @@ class Controller : BluetoothListener {
 //				?.get(0)
 //				?.value
 //				?.toIntOrNull()
-//				?.let { code -> BluetoothMessageKind.values().find { it.code == code } }
+//				?.let { code -> MessageKind.values().find { it.code == code } }
 //				?.also { messageType ->
 //					BluetoothCommunicator.send(messageType, areaTxMessage.text
 //							.replace("[ \t\n\r]".toRegex(), "")
@@ -763,31 +790,57 @@ class Controller : BluetoothListener {
 //				}
 //	}
 
-	override fun onConnecting() {
-		super.onConnecting()
-		labelStatus.text = "Connecting ..."
-		progressBluetooth.progress = -1.0
+	override fun onConnecting(channel: Channel) {
+		super.onConnecting(channel)
+		when (channel) {
+			Channel.USB -> {
+				labelUSBStatus.text = "Connecting ..."
+				progressUSB.progress = -1.0
+			}
+			Channel.BLUETOOTH -> {
+				labelBluetoothStatus.text = "Connecting ..."
+				progressBluetooth.progress = -1.0
+			}
+		}
 	}
 
-	override fun onConnect() {
-		super.onConnect()
-		labelStatus.text = "Connected"
+	override fun onConnect(channel: Channel) {
+		super.onConnect(channel)
+		when (channel) {
+			Channel.USB -> {
+				labelUSBStatus.text = "Connected"
+				buttonUSBConnect.text = "Disconnect"
+				progressUSB.progress = 0.0
+			}
+			Channel.BLUETOOTH -> {
+				labelBluetoothStatus.text = "Connected"
+				buttonBluetoothConnect.text = "Disconnect"
+				progressBluetooth.progress = 0.0
+			}
+		}
 		enabled = true
-		progressBluetooth.progress = 0.0
-		buttonConnect.text = "Disconnect [Ctrl+D]"
 	}
 
-	override fun onDisconnect() {
-		super.onDisconnect()
-		labelStatus.text = " Not Connected"
-		labelPIR.text = "No update yet."
+	override fun onDisconnect(channel: Channel) {
+		super.onDisconnect(channel)
+		when (channel) {
+			Channel.USB -> {
+				labelUSBStatus.text = "Not Connected"
+				buttonUSBConnect.text = "Connect"
+				progressUSB.progress = 0.0
+			}
+			Channel.BLUETOOTH -> {
+				labelBluetoothStatus.text = "Not Connected"
+				buttonBluetoothConnect.text = "Connect"
+				progressBluetooth.progress = 0.0
+			}
+		}
+		//labelPIR.text = "No update yet."
 		enabled = false
-		progressBluetooth.progress = 0.0
-		buttonConnect.text = "Connect [Ctrl+C]"
 	}
 
-	override fun onMessageReceived(message: ByteArray) {
-		super.onMessageReceived(message)
+	override fun onMessageReceived(channel: Channel, message: ByteArray) {
+		super.onMessageReceived(channel, message)
 		val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
 
 		var chars = ""
@@ -810,10 +863,11 @@ class Controller : BluetoothListener {
 			if (i % 8 == 7) sb.append("          |\n")
 		}
 
-		areaRxMessage.text += "\n%s [CRC: 0x%02X]: %s (0x%02X) with %d bytes: \n%s"
-				.format(timestamp,
+		areaRxMessage.text += "\n%s> %s [CRC: 0x%02X]: %s (0x%02X) with %d bytes: \n%s"
+				.format(channel,
+						timestamp,
 						message[0],
-						BluetoothMessageKind.values().find { it.code == message[1].toUInt() } ?: "",
+						MessageKind.values().find { it.code == message[1].toUInt() } ?: "",
 						message[1],
 						message.size,
 						sb.toString())
@@ -822,7 +876,7 @@ class Controller : BluetoothListener {
 		areaRxMessage.deselect()
 
 		when (message[1].toUInt()) {
-			BluetoothMessageKind.SETTINGS.code -> {
+			MessageKind.SETTINGS.code -> {
 				if (message.size == 25) {
 					PairingMethod.values()
 							.find { it.code == message[2].toUInt() }
@@ -838,14 +892,14 @@ class Controller : BluetoothListener {
 					settingsEnabled = true
 				}
 			}
-			BluetoothMessageKind.DHT11.code -> {
+			MessageKind.DHT11.code -> {
 				if (message.size == 4) {
 					textDHT11Temperature.text = "${message[2]}"
 					textDHT11Humidity.text = "${message[3]}"
 					dht11Enabled = true
 				}
 			}
-			BluetoothMessageKind.LCD.code -> {
+			MessageKind.LCD.code -> {
 				if (message.size > 4) {
 					val backlight = message[2].toUInt() > 0
 					val line = message[3].toUInt()
@@ -866,7 +920,7 @@ class Controller : BluetoothListener {
 					lcdEnabled = true
 				}
 			}
-			BluetoothMessageKind.MCP23017.code -> {
+			MessageKind.MCP23017.code -> {
 				if (message.size == 5) {
 					checkboxMCP23017A00.isIndeterminate = false
 					checkboxMCP23017A01.isIndeterminate = false
@@ -921,12 +975,12 @@ class Controller : BluetoothListener {
 					mcp23017Enabled = true
 				}
 			}
-			BluetoothMessageKind.PIR.code -> {
+			MessageKind.PIR.code -> {
 				if (message.size == 3) {
 					labelPIR.text = if (message[2] > 0) "Motion detected!" else "Nothing is moving."
 				}
 			}
-			BluetoothMessageKind.RGB.code -> {
+			MessageKind.RGB.code -> {
 				if (message.size == 13) {
 					textRGBListSize.text = "${message[2].toUInt()}"
 
@@ -947,7 +1001,7 @@ class Controller : BluetoothListener {
 					rgbEnabled = true
 				}
 			}
-			BluetoothMessageKind.WS281x.code -> {
+			MessageKind.WS281x.code -> {
 				if (message.size == 12) {
 					//val count = message[2].toUInt()
 					val led = message[3].toUInt()
@@ -972,7 +1026,7 @@ class Controller : BluetoothListener {
 					ws281xEnabled = true
 				}
 			}
-			BluetoothMessageKind.WS281xLIGHT.code -> {
+			MessageKind.WS281xLIGHT.code -> {
 				if (message.size == 33) {
 					textWS281xLightListSize.text = "${message[2].toUInt()}"
 
@@ -1005,8 +1059,8 @@ class Controller : BluetoothListener {
 		enabled = true
 	}
 
-	override fun onMessageSent(message: ByteArray, remaining: Int) {
-		super.onMessageSent(message, remaining)
+	override fun onMessageSent(channel: Channel, message: ByteArray, remaining: Int) {
+		super.onMessageSent(channel, message, remaining)
 		val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
 
 		var chars = ""
@@ -1030,12 +1084,13 @@ class Controller : BluetoothListener {
 
 		textTxCRC.text = "0x%02X".format(message[0])
 		textTxMessageType.text = if (message.isNotEmpty()) "%s [0x%02X]"
-				.format(BluetoothMessageKind.values().find { it.code == message[1].toUInt() } ?: "", message[1]) else ""
+				.format(MessageKind.values().find { it.code == message[1].toUInt() } ?: "", message[1]) else ""
 
-		areaTxMessage.text += "\n%s [CRC: 0x%02X]: %s (0x%02X) with %d bytes: \n%s"
-				.format(timestamp,
+		areaTxMessage.text += "\n%s> %s [CRC: 0x%02X]: %s (0x%02X) with %d bytes: \n%s"
+				.format(channel,
+						timestamp,
 						message[0],
-						BluetoothMessageKind.values().find { it.code == message[1].toUInt() } ?: "",
+						MessageKind.values().find { it.code == message[1].toUInt() } ?: "",
 						message[1],
 						message.size,
 						sb.toString())
@@ -1044,12 +1099,28 @@ class Controller : BluetoothListener {
 		areaTxMessage.deselect()
 
 		if (remaining == 0) {
-			labelStatus.text = "Connected"
-			progressBluetooth.progress = 0.0
+			when (channel) {
+				Channel.USB -> {
+					labelUSBStatus.text = "Connected"
+					progressUSB.progress = 0.0
+				}
+				Channel.BLUETOOTH -> {
+					labelBluetoothStatus.text = "Connected"
+					progressBluetooth.progress = 0.0
+				}
+			}
 			txEnabled = true
 		} else {
-			labelStatus.text = "Sending ..."
-			progressBluetooth.progress = -1.0
+			when (channel) {
+				Channel.USB -> {
+					labelUSBStatus.text = "Sending ..."
+					progressUSB.progress = -1.0
+				}
+				Channel.BLUETOOTH -> {
+					labelBluetoothStatus.text = "Sending ..."
+					progressBluetooth.progress = -1.0
+				}
+			}
 		}
 	}
 
@@ -1081,4 +1152,21 @@ class Controller : BluetoothListener {
 
 	@Suppress("EXPERIMENTAL_API_USAGE")
 	private fun Byte.toUInt() = toUByte().toInt()
+
+	fun MessageKind.sendGetRequest(param: Int? = null) {
+		if (param == null) {
+			if (radioUSB.isSelected) USBCommunicator.send(this)
+			else if (radioBluetooth.isSelected) BluetoothCommunicator.send(this)
+		} else {
+			if (radioUSB.isSelected) USBCommunicator.send(this, byteArrayOf(param.toByte()))
+			else if (radioBluetooth.isSelected) BluetoothCommunicator.send(this, byteArrayOf(param.toByte()))
+		}
+	}
+
+	fun MessageKind.sendConfiguration(vararg params: Number) {
+		if (radioUSB.isSelected) USBCommunicator.send(this, params.map { it.toByte() }.toByteArray())
+		else if (radioBluetooth.isSelected) BluetoothCommunicator.send(this, params.map { it.toByte() }.toByteArray())
+	}
+
+
 }
