@@ -13,7 +13,6 @@ import jssc.SerialPortList
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.experimental.and
 import kotlin.math.min
 
 /**
@@ -467,7 +466,7 @@ class Controller : CommunicatorListener {
 		textBluetoothAddress.text = "34:81:F4:1A:4B:29"
 		USBCommunicator.register(this)
 		BluetoothCommunicator.register(this)
-		enabled = false
+		enabled = USBCommunicator.isConnected || BluetoothCommunicator.isConnected
 	}
 
 	@FXML
@@ -486,25 +485,27 @@ class Controller : CommunicatorListener {
 	@FXML
 	fun onBluetoothConnectionToggle() {
 		if (BluetoothCommunicator.isConnected || BluetoothCommunicator.isConnecting) {
+			BluetoothCommunicator.shouldReconnect = false
 			BluetoothCommunicator.disconnect()
 			buttonBluetoothConnect.text = "Connect"
 		} else {
-			(textBluetoothChannel.text.toIntOrNull() ?: 6)
-					.let { channel -> BluetoothCommunicator.connect(textBluetoothAddress.text, channel) }
-					.takeIf { it }
-					?.also { buttonBluetoothConnect.text = "Cancel" }
+			val channel = textBluetoothChannel.text.toIntOrNull() ?: 6
+			BluetoothCommunicator.shouldReconnect = true
+			if (BluetoothCommunicator.connect(textBluetoothAddress.text, channel)) {
+				buttonBluetoothConnect.text = "Cancel"
+			}
 		}
 	}
 
 	@FXML
 	fun onBluetoothSettingsGet() {
 		//settingsEnabled = false
-		MessageKind.SETTINGS.sendGetRequest()
+		MessageKind.BT_SETTINGS.sendGetRequest()
 	}
 
 	@FXML
 	fun onBluetoothSettingsSet() {
-		MessageKind.SETTINGS.sendConfiguration(
+		MessageKind.BT_SETTINGS.sendConfiguration(
 				*(listOf(comboBluetoothPairingMethod.selectionModel.selectedIndex)
 						+ textBluetoothPin.text.padEnd(6, 0.toChar()).substring(0, 6).map { it.toInt() }
 						+ textBluetoothName.text.padEnd(16, 0.toChar()).substring(0, 16).map { it.toInt() }).toTypedArray())
@@ -573,7 +574,8 @@ class Controller : CommunicatorListener {
 					?.get(1)
 					?.toInt(16) ?: 0x20,
 					ports)
-			if (checkboxMCP23017PortA.isSelected) params.add(bools2Byte(checkboxMCP23017A07.isSelected,
+			if (checkboxMCP23017PortA.isSelected) params.add(bools2Byte(
+					checkboxMCP23017A07.isSelected,
 					checkboxMCP23017A06.isSelected,
 					checkboxMCP23017A05.isSelected,
 					checkboxMCP23017A04.isSelected,
@@ -581,7 +583,8 @@ class Controller : CommunicatorListener {
 					checkboxMCP23017A02.isSelected,
 					checkboxMCP23017A01.isSelected,
 					checkboxMCP23017A00.isSelected))
-			if (checkboxMCP23017PortB.isSelected) params.add(bools2Byte(checkboxMCP23017B07.isSelected,
+			if (checkboxMCP23017PortB.isSelected) params.add(bools2Byte(
+					checkboxMCP23017B07.isSelected,
 					checkboxMCP23017B06.isSelected,
 					checkboxMCP23017B05.isSelected,
 					checkboxMCP23017B04.isSelected,
@@ -818,7 +821,7 @@ class Controller : CommunicatorListener {
 				progressBluetooth.progress = 0.0
 			}
 		}
-		enabled = true
+		enabled = USBCommunicator.isConnected || BluetoothCommunicator.isConnected
 	}
 
 	override fun onDisconnect(channel: Channel) {
@@ -836,7 +839,11 @@ class Controller : CommunicatorListener {
 			}
 		}
 		//labelPIR.text = "No update yet."
-		enabled = false
+		enabled = USBCommunicator.isConnected || BluetoothCommunicator.isConnected
+		val selected = choiceUSBPort.selectionModel.selectedItem
+		choiceUSBPort.items.clear()
+		choiceUSBPort.items.addAll(SerialPortList.getPortNames())
+		selected?.also { choiceUSBPort.selectionModel.select(it) }
 	}
 
 	override fun onMessageReceived(channel: Channel, message: ByteArray) {
@@ -876,7 +883,7 @@ class Controller : CommunicatorListener {
 		areaRxMessage.deselect()
 
 		when (message[1].toUInt()) {
-			MessageKind.SETTINGS.code -> {
+			MessageKind.BT_SETTINGS.code -> {
 				if (message.size == 25) {
 					PairingMethod.values()
 							.find { it.code == message[2].toUInt() }
@@ -939,39 +946,39 @@ class Controller : CommunicatorListener {
 					checkboxMCP23017B06.isIndeterminate = false
 					checkboxMCP23017B07.isIndeterminate = false
 
-					checkboxMCP23017A00.isSelected = (message[3] and 0b00000001.toByte()) > 0
-					checkboxMCP23017A01.isSelected = (message[3] and 0b00000010.toByte()) > 0
-					checkboxMCP23017A02.isSelected = (message[3] and 0b00000100.toByte()) > 0
-					checkboxMCP23017A03.isSelected = (message[3] and 0b00001000.toByte()) > 0
-					checkboxMCP23017A04.isSelected = (message[3] and 0b00010000.toByte()) > 0
-					checkboxMCP23017A05.isSelected = (message[3] and 0b00100000.toByte()) > 0
-					checkboxMCP23017A06.isSelected = (message[3] and 0b01000000.toByte()) > 0
-					checkboxMCP23017A07.isSelected = (message[3] and 0b10000000.toByte()) > 0
-					checkboxMCP23017B00.isSelected = (message[4] and 0b00000001.toByte()) > 0
-					checkboxMCP23017B01.isSelected = (message[4] and 0b00000010.toByte()) > 0
-					checkboxMCP23017B02.isSelected = (message[4] and 0b00000100.toByte()) > 0
-					checkboxMCP23017B03.isSelected = (message[4] and 0b00001000.toByte()) > 0
-					checkboxMCP23017B04.isSelected = (message[4] and 0b00010000.toByte()) > 0
-					checkboxMCP23017B05.isSelected = (message[4] and 0b00100000.toByte()) > 0
-					checkboxMCP23017B06.isSelected = (message[4] and 0b01000000.toByte()) > 0
-					checkboxMCP23017B07.isSelected = (message[4] and 0b10000000.toByte()) > 0
+					checkboxMCP23017A00.isSelected = (message[3].toUInt() and 0b00000001) > 0
+					checkboxMCP23017A01.isSelected = (message[3].toUInt() and 0b00000010) > 0
+					checkboxMCP23017A02.isSelected = (message[3].toUInt() and 0b00000100) > 0
+					checkboxMCP23017A03.isSelected = (message[3].toUInt() and 0b00001000) > 0
+					checkboxMCP23017A04.isSelected = (message[3].toUInt() and 0b00010000) > 0
+					checkboxMCP23017A05.isSelected = (message[3].toUInt() and 0b00100000) > 0
+					checkboxMCP23017A06.isSelected = (message[3].toUInt() and 0b01000000) > 0
+					checkboxMCP23017A07.isSelected = (message[3].toUInt() and 0b10000000) > 0
+					checkboxMCP23017B00.isSelected = (message[4].toUInt() and 0b00000001) > 0
+					checkboxMCP23017B01.isSelected = (message[4].toUInt() and 0b00000010) > 0
+					checkboxMCP23017B02.isSelected = (message[4].toUInt() and 0b00000100) > 0
+					checkboxMCP23017B03.isSelected = (message[4].toUInt() and 0b00001000) > 0
+					checkboxMCP23017B04.isSelected = (message[4].toUInt() and 0b00010000) > 0
+					checkboxMCP23017B05.isSelected = (message[4].toUInt() and 0b00100000) > 0
+					checkboxMCP23017B06.isSelected = (message[4].toUInt() and 0b01000000) > 0
+					checkboxMCP23017B07.isSelected = (message[4].toUInt() and 0b10000000) > 0
 
-					labelMCP23017A00.text = if ((message[3] and 0b00000001.toByte()) > 0) "1" else "0"
-					labelMCP23017A01.text = if ((message[3] and 0b00000010.toByte()) > 0) "1" else "0"
-					labelMCP23017A02.text = if ((message[3] and 0b00000100.toByte()) > 0) "1" else "0"
-					labelMCP23017A03.text = if ((message[3] and 0b00001000.toByte()) > 0) "1" else "0"
-					labelMCP23017A04.text = if ((message[3] and 0b00010000.toByte()) > 0) "1" else "0"
-					labelMCP23017A05.text = if ((message[3] and 0b00100000.toByte()) > 0) "1" else "0"
-					labelMCP23017A06.text = if ((message[3] and 0b01000000.toByte()) > 0) "1" else "0"
-					labelMCP23017A07.text = if ((message[3] and 0b10000000.toByte()) > 0) "1" else "0"
-					labelMCP23017B00.text = if ((message[4] and 0b00000001.toByte()) > 0) "1" else "0"
-					labelMCP23017B01.text = if ((message[4] and 0b00000010.toByte()) > 0) "1" else "0"
-					labelMCP23017B02.text = if ((message[4] and 0b00000100.toByte()) > 0) "1" else "0"
-					labelMCP23017B03.text = if ((message[4] and 0b00001000.toByte()) > 0) "1" else "0"
-					labelMCP23017B04.text = if ((message[4] and 0b00010000.toByte()) > 0) "1" else "0"
-					labelMCP23017B05.text = if ((message[4] and 0b00100000.toByte()) > 0) "1" else "0"
-					labelMCP23017B06.text = if ((message[4] and 0b01000000.toByte()) > 0) "1" else "0"
-					labelMCP23017B07.text = if ((message[4] and 0b10000000.toByte()) > 0) "1" else "0"
+					labelMCP23017A00.text = if ((message[3].toUInt() and 0b00000001) > 0) "1" else "0"
+					labelMCP23017A01.text = if ((message[3].toUInt() and 0b00000010) > 0) "1" else "0"
+					labelMCP23017A02.text = if ((message[3].toUInt() and 0b00000100) > 0) "1" else "0"
+					labelMCP23017A03.text = if ((message[3].toUInt() and 0b00001000) > 0) "1" else "0"
+					labelMCP23017A04.text = if ((message[3].toUInt() and 0b00010000) > 0) "1" else "0"
+					labelMCP23017A05.text = if ((message[3].toUInt() and 0b00100000) > 0) "1" else "0"
+					labelMCP23017A06.text = if ((message[3].toUInt() and 0b01000000) > 0) "1" else "0"
+					labelMCP23017A07.text = if ((message[3].toUInt() and 0b10000000) > 0) "1" else "0"
+					labelMCP23017B00.text = if ((message[4].toUInt() and 0b00000001) > 0) "1" else "0"
+					labelMCP23017B01.text = if ((message[4].toUInt() and 0b00000010) > 0) "1" else "0"
+					labelMCP23017B02.text = if ((message[4].toUInt() and 0b00000100) > 0) "1" else "0"
+					labelMCP23017B03.text = if ((message[4].toUInt() and 0b00001000) > 0) "1" else "0"
+					labelMCP23017B04.text = if ((message[4].toUInt() and 0b00010000) > 0) "1" else "0"
+					labelMCP23017B05.text = if ((message[4].toUInt() and 0b00100000) > 0) "1" else "0"
+					labelMCP23017B06.text = if ((message[4].toUInt() and 0b01000000) > 0) "1" else "0"
+					labelMCP23017B07.text = if ((message[4].toUInt() and 0b10000000) > 0) "1" else "0"
 					mcp23017Enabled = true
 				}
 			}
@@ -1056,7 +1063,7 @@ class Controller : CommunicatorListener {
 				}
 			}
 		}
-		enabled = true
+		enabled = USBCommunicator.isConnected || BluetoothCommunicator.isConnected
 	}
 
 	override fun onMessageSent(channel: Channel, message: ByteArray, remaining: Int) {

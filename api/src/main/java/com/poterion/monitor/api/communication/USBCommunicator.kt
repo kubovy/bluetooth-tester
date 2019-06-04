@@ -2,6 +2,7 @@ package com.poterion.monitor.api.communication
 
 import javafx.application.Platform
 import jssc.SerialPort
+import jssc.SerialPortEvent
 import jssc.SerialPortEventListener
 import jssc.SerialPortException
 import org.slf4j.Logger
@@ -16,8 +17,16 @@ import java.util.concurrent.Executors
  * @author Jan Kubovy <jan@kubovy.eu>
  */
 object USBCommunicator {
+
+	enum class State {
+		IDLE,
+		LENGTH_HIGH,
+		LENGTH_LOW,
+		ADDITIONAL
+	}
+
 	private val LOGGER: Logger = LoggerFactory.getLogger(USBCommunicator::class.java)
-	const val MAX_PACKET_SIZE = 32
+	const val MAX_PACKET_SIZE = 35
 
 	private var serialPort: SerialPort? = null
 
@@ -32,41 +41,117 @@ object USBCommunicator {
 	val isConnected
 		get() = serialPort?.isOpened == true
 
-	private val serialPortEventListerner = SerialPortEventListener { event ->
-		if (event.isRXCHAR) { // If data is available
-			val (length, buffer) = event.eventValue
-					.takeIf { it > 0 }
-					?.let { it to serialPort?.readBytes(it) }
-					?.takeIf { (length, data) -> data?.size == length }
-					?: 0 to null
+	/**
+	 * This implements the application communication layer (see components/serial_communication.h)
+	 */
+	private fun processIncomingMessage(data: ByteArray) {
+		try {
+			val chksumReceived = data[0].toInt() and 0xFF
+			val chksum = data.toList().subList(1, data.size).toByteArray().calculateChecksum()
+			LOGGER.debug("Inbound RAW [${"0x%02X".format(chksumReceived)}/${"0x%02X".format(chksum)}]:" +
+					" ${data.joinToString(" ") { "0x%02X".format(it) }}")
 
-			if (buffer != null && buffer.size == length) try {
-				val chksumReceived = buffer[0].toInt() and 0xFF
-				val chksum = buffer.toList().subList(1, length).toByteArray().calculateChecksum()
-				LOGGER.debug("Inbound RAW [${"0x%02X".format(chksumReceived)}/${"0x%02X".format(chksum)}]:" +
-						" ${buffer.copyOfRange(0, length).joinToString(" ") { "0x%02X".format(it) }}")
+			if (chksum == chksumReceived) {
+				val messageKind = data[1]
+						.let { byte -> MessageKind.values().find { it.code.toByte() == byte } }
+						?: MessageKind.UNKNOWN
 
-				if (chksum == chksumReceived) {
-					val messageKind = buffer[1]
-							.let { byte -> MessageKind.values().find { it.code.toByte() == byte } }
-							?: MessageKind.UNKNOWN
+				if (messageKind != MessageKind.CRC) chksumQueue.add(chksum.toByte())
 
-					if (messageKind != MessageKind.CRC) chksumQueue.add(chksum.toByte())
+				when (messageKind) {
+					MessageKind.CRC -> {
+						lastChecksum = (data[2].toInt() and 0xFF)
+						LOGGER.debug("Inbound: CRC: ${"0x%02X".format(lastChecksum)}")
+					}
+					else -> {
+					}
+				}
+				listeners.forEach { Platform.runLater { it.onMessageReceived(Channel.USB, data) } }
+			}
+		} catch (e: ArrayIndexOutOfBoundsException) {
+			LOGGER.info(e.message, e)
+		} catch (e: SerialPortException) {
+			LOGGER.info(e.message, e)
+		}
+	}
 
-					when (messageKind) {
-						MessageKind.CRC -> {
-							lastChecksum = (buffer[2].toInt() and 0xFF)
-							LOGGER.debug("Inbound: CRC: ${"0x%02X".format(lastChecksum)}")
-						}
-						else -> {
-							listeners.forEach { Platform.runLater { it.onMessageReceived(Channel.USB, buffer.copyOfRange(0, length)) } }
+	/**
+	 * This implements a lower communication layer similar to the IS1678S.
+	 *
+	 * One application packet can be divided into multiple interface packets.
+	 *
+	 * ----------------------------------
+	 * |             PACKET             |
+	 * ----------------------------------
+	 * |SYNC|LENH|LENL|DATA        |CRC |
+	 * ----------------------------------
+	 * |0xAA|0xXX|0xXX|0xXX .. 0xXX|0xCC|
+	 * ----------------------------------
+	 * |    |         |---- LEN ---|    |
+	 * |    |-------- CRC -------- |    |
+	 * ----------------------------------
+	 */
+	private val serialPortEventListerner = object : SerialPortEventListener {
+		private val buffer: ByteArray = ByteArray(MAX_PACKET_SIZE)
+		private var chksum = 0
+		private var index = 0
+		private var length = 0
+		private var state = State.IDLE
+
+		override fun serialEvent(event: SerialPortEvent) {
+			if (event.isRXCHAR) { // If data is available
+				val (length, data) = event.eventValue
+						.takeIf { it > 0 }
+						?.let { it to serialPort?.readBytes(it) }
+						?.takeIf { (length, data) -> data?.size == length }
+						?: 0 to null
+
+				if (data != null && data.size == length) {
+					data.forEach { byte ->
+						when (state) {
+							State.IDLE -> {
+								if (byte.toUInt() == 0xAA) {
+									this.state = State.LENGTH_HIGH
+									this.chksum = 0
+									LOGGER.debug("USB> 0xAA: IDLE -> LENGTH_HIGH")
+								}
+							}
+							State.LENGTH_HIGH -> {
+								this.length = byte.toUInt() * 256
+								this.chksum += byte.toUInt()
+								this.state = State.LENGTH_LOW
+								LOGGER.debug("USB> 0x%02X: LENGTH_HIGH -> LENGTH_LOW".format(byte))
+							}
+							State.LENGTH_LOW -> {
+								this.length += byte.toUInt()
+								if (this.length > buffer.size) {
+									this.state = State.IDLE
+									LOGGER.debug("USB> 0x%02X: LENGTH_LOW -> IDLE".format(byte))
+								} else {
+									this.chksum += byte.toUInt()
+									this.index = 0
+									this.state = State.ADDITIONAL
+									LOGGER.debug("USB> 0x%02X: LENGTH_LOW -> ADDITIONAL".format(byte))
+								}
+							}
+							State.ADDITIONAL -> {
+								if (this.index < this.length) {
+									this.buffer[this.index++] = byte
+									this.chksum += byte.toUInt()
+								} else {
+									this.chksum = (0xFF - this.chksum + 1) and 0xFF
+									if (this.chksum == byte.toUInt()) {
+										LOGGER.debug("USB> 0x%02X: checksum OK (0x%02X)".format(byte, this.chksum))
+										processIncomingMessage(this.buffer.sliceArray(0 until this.length))
+									} else {
+										LOGGER.warn("USB> 0x%02X: Wrong checksum (0x%02X)".format(byte, this.chksum))
+									}
+									this.state = State.IDLE
+								}
+							}
 						}
 					}
 				}
-			} catch (e: ArrayIndexOutOfBoundsException) {
-				LOGGER.info(e.message, e)
-			} catch (e: SerialPortException) {
-				LOGGER.info(e.message, e)
 			}
 		}
 	}
@@ -132,18 +217,23 @@ object USBCommunicator {
 			chksumQueue.clear()
 
 			serialPort = SerialPort(portName)
-			serialPort?.openPort()
-			serialPort?.setParams(SerialPort.BAUDRATE_115200,
-					SerialPort.DATABITS_8,
-					SerialPort.STOPBITS_1,
-					SerialPort.PARITY_NONE)
-			serialPort?.addEventListener(serialPortEventListerner)
-			outboundThread?.takeIf { !it.isInterrupted }?.interrupt()
-			outboundThread = Thread(outboundRunnable)
-			outboundExecutor.execute(outboundThread)
+			try {
+				serialPort?.openPort()
+				serialPort?.setParams(SerialPort.BAUDRATE_115200,
+						SerialPort.DATABITS_8,
+						SerialPort.STOPBITS_1,
+						SerialPort.PARITY_NONE)
+				serialPort?.addEventListener(serialPortEventListerner)
+				outboundThread?.takeIf { !it.isInterrupted }?.interrupt()
+				outboundThread = Thread(outboundRunnable)
+				outboundExecutor.execute(outboundThread)
 
-			listeners.forEach { Platform.runLater { it.onConnect(Channel.USB) } }
-			return true
+				listeners.forEach { Platform.runLater { it.onConnect(Channel.USB) } }
+				return true
+			} catch (e: SerialPortException) {
+				LOGGER.error(e.message, e)
+				disconnect()
+			}
 		}
 		return false
 	}
@@ -159,7 +249,7 @@ object USBCommunicator {
 			serialPort?.closePort()
 			serialPort = null
 		} catch (e: IOException) {
-			LOGGER.error(e.message, e)
+			LOGGER.error(e.message)
 		}
 	}
 
@@ -204,4 +294,7 @@ object USBCommunicator {
 			else -> get(it - 3)
 		}
 	}
+
+	@Suppress("EXPERIMENTAL_API_USAGE")
+	private fun Byte.toUInt() = toUByte().toInt()
 }

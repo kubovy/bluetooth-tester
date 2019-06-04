@@ -13,7 +13,6 @@ enum class MessageKind(val code: Int, val delay: Long? = null) {
 	IDD(0x01),
 	/** Plain message */
 	PLAIN(0x02),
-	SETTINGS(0x03),
 	IO(0x10),
 	DHT11(0x11),
 	LCD(0x12),
@@ -22,6 +21,8 @@ enum class MessageKind(val code: Int, val delay: Long? = null) {
 	RGB(0x15),
 	WS281x(0x16),
 	WS281xLIGHT(0x17),
+	BT_SETTINGS(0x20),
+	BT_EEPROM(0x21),
 	SM_CONFIGURATION(0x80),
 	SM_PULL(0x81),
 	SM_PUSH(0x82),

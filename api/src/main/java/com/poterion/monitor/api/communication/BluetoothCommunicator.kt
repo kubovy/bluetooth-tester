@@ -185,9 +185,9 @@ object BluetoothCommunicator {
 								LOGGER.debug("Inbound: CRC: ${"0x%02X".format(lastChecksum)}")
 							}
 							else -> {
-								listeners.forEach { Platform.runLater { it.onMessageReceived(Channel.BLUETOOTH, buffer.copyOfRange(0, length)) } }
 							}
 						}
+						listeners.forEach { Platform.runLater { it.onMessageReceived(Channel.BLUETOOTH, buffer.copyOfRange(0, length)) } }
 					}
 				}
 			}

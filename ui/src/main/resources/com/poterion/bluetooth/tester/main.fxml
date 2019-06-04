@@ -6,7 +6,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-            minWidth="-Infinity" prefHeight="1250.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/10.0.1"
+            minWidth="-Infinity" prefHeight="1250.0" prefWidth="860.0" xmlns="http://javafx.com/javafx/10.0.1"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.poterion.bluetooth.tester.Controller">
     <children>
         <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
@@ -18,7 +18,6 @@
             <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
             <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
             <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
             <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
@@ -47,8 +46,8 @@
          <children>
              <Button fx:id="buttonBluetoothConnect" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
                      onAction="#onBluetoothConnectionToggle" text="Connect" GridPane.columnIndex="2"
-                     GridPane.rowIndex="3" GridPane.rowSpan="2"/>
-             <HBox GridPane.columnIndex="1" GridPane.rowIndex="22">
+                     GridPane.rowIndex="3"/>
+             <HBox GridPane.columnIndex="1" GridPane.rowIndex="21">
                <children>
                    <Label text="Message Kind">
                        <padding>
@@ -70,20 +69,20 @@
             </HBox>
              <TextArea fx:id="areaTxMessage" editable="false" maxHeight="1.7976931348623157E308"
                        maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                       promptText="No logs yet" GridPane.columnIndex="1" GridPane.rowIndex="23" GridPane.vgrow="ALWAYS">
+                       promptText="No logs yet" GridPane.columnIndex="1" GridPane.rowIndex="22" GridPane.vgrow="ALWAYS">
                <font>
                   <Font name="Monospaced Regular" size="10.0" />
                </font>
             </TextArea>
              <TextArea fx:id="areaRxMessage" editable="false" maxHeight="1.7976931348623157E308"
                        maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                       promptText="No logs yet" GridPane.columnIndex="1" GridPane.rowIndex="24" GridPane.vgrow="ALWAYS">
+                       promptText="No logs yet" GridPane.columnIndex="1" GridPane.rowIndex="23" GridPane.vgrow="ALWAYS">
                <font>
                   <Font name="Monospaced Regular" size="10.0" />
                </font>
             </TextArea>
              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                    text="TX" GridPane.rowIndex="22" GridPane.valignment="TOP">
+                    text="TX" GridPane.rowIndex="21" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -95,7 +94,7 @@
                </font>
             </Label>
              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                    text="RX" GridPane.rowIndex="24" GridPane.valignment="TOP">
+                    text="RX" GridPane.rowIndex="23" GridPane.valignment="TOP">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -104,7 +103,7 @@
                </font>
             </Label>
              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRxClear" text="Clear"
-                     GridPane.columnIndex="2" GridPane.rowIndex="24" GridPane.valignment="TOP"/>
+                     GridPane.columnIndex="2" GridPane.rowIndex="23" GridPane.valignment="TOP"/>
              <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="3">
                  <children>
                      <Label text="Address:">
@@ -133,7 +132,7 @@
                </children>
             </HBox>
              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                    text="Settings" GridPane.rowIndex="5" GridPane.valignment="TOP">
+                    text="Bluetooth&#10;Settings" wrapText="true" GridPane.rowIndex="4" GridPane.valignment="TOP">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -142,7 +141,7 @@
                </font>
             </Label>
              <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1"
-                       GridPane.rowIndex="5">
+                       GridPane.rowIndex="4">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
                   <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
@@ -176,14 +175,14 @@
                              GridPane.columnIndex="2" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1"/>
                </children>
             </GridPane>
-             <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="5">
+             <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="4">
                <children>
                   <Button fx:id="buttonSettingsGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onBluetoothSettingsGet" text="Get" HBox.hgrow="SOMETIMES" />
                   <Button fx:id="buttonSettingsSet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onBluetoothSettingsSet" text="Set" HBox.hgrow="SOMETIMES" />
                </children>
             </HBox>
              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                    text="RGB" GridPane.rowIndex="15" GridPane.valignment="TOP">
+                    text="RGB" GridPane.rowIndex="14" GridPane.valignment="TOP">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -192,7 +191,7 @@
                </font>
             </Label>
              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                    text="DHT11" GridPane.rowIndex="7" GridPane.valignment="TOP">
+                    text="DHT11" GridPane.rowIndex="6" GridPane.valignment="TOP">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -201,7 +200,7 @@
                </font>
             </Label>
              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                    text="PIR" GridPane.rowIndex="13" GridPane.valignment="TOP">
+                    text="PIR" GridPane.rowIndex="12" GridPane.valignment="TOP">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -210,7 +209,7 @@
                </font>
             </Label>
              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                    text="WS281x&#10;Indicators" GridPane.rowIndex="17" GridPane.valignment="TOP">
+                    text="WS281x&#10;Indicators" GridPane.rowIndex="16" GridPane.valignment="TOP">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -219,10 +218,10 @@
                </font>
             </Label>
              <Button fx:id="buttonDHT11Get" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                     onAction="#onDHT11Get" text="Get" GridPane.columnIndex="2" GridPane.rowIndex="7"/>
+                     onAction="#onDHT11Get" text="Get" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
              <Button fx:id="buttonPIRGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPIRGet"
-                     text="Get" GridPane.columnIndex="2" GridPane.rowIndex="13"/>
-             <GridPane GridPane.columnIndex="2" GridPane.rowIndex="15">
+                     text="Get" GridPane.columnIndex="2" GridPane.rowIndex="12"/>
+             <GridPane GridPane.columnIndex="2" GridPane.rowIndex="14">
                  <columnConstraints>
                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
                  </columnConstraints>
@@ -244,7 +243,7 @@
                </children>
              </GridPane>
              <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                   GridPane.columnIndex="1" GridPane.rowIndex="7">
+                   GridPane.columnIndex="1" GridPane.rowIndex="6">
                <children>
                   <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Temperature:">
                      <padding>
@@ -279,7 +278,7 @@
                </children>
             </HBox>
              <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1"
-                       GridPane.hgrow="ALWAYS" GridPane.rowIndex="15">
+                       GridPane.hgrow="ALWAYS" GridPane.rowIndex="14">
                <columnConstraints>
                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
@@ -372,14 +371,13 @@
                               GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                </children>
             </GridPane>
-             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="14"/>
-             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="4"/>
-             <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="6"/>
-             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="8"/>
-             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="10"/>
-             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="16"/>
-             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="21"/>
-             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="17">
+             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="13"/>
+             <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="5"/>
+             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="7"/>
+             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="9"/>
+             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="15"/>
+             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="20"/>
+             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="16">
               <columnConstraints>
                 <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
@@ -446,21 +444,21 @@
                               prefWidth="45.0" promptText="All" GridPane.rowIndex="1"/>
                </children>
             </GridPane>
-             <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="17">
+             <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="16">
                <children>
                   <Button fx:id="buttonWS281xGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onWS281xGet" text="Get" HBox.hgrow="SOMETIMES" />
                   <Button fx:id="buttonWS281xSet" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onWS281xSet" text="Set" HBox.hgrow="SOMETIMES" />
                </children>
             </HBox>
              <Label fx:id="labelPIR" maxWidth="1.7976931348623157E308" text="No update yet." GridPane.columnIndex="1"
-                    GridPane.rowIndex="13">
+                    GridPane.rowIndex="12">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </Label>
-             <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="12"/>
+             <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="11"/>
              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                    text="MCP23017" GridPane.rowIndex="11" GridPane.valignment="TOP">
+                    text="MCP23017" GridPane.rowIndex="10" GridPane.valignment="TOP">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -469,7 +467,7 @@
                </font>
             </Label>
              <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-                       minWidth="-Infinity" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                       minWidth="-Infinity" GridPane.columnIndex="1" GridPane.rowIndex="10">
               <columnConstraints>
                   <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
                   <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
@@ -634,14 +632,14 @@
                    </Separator>
                </children>
             </GridPane>
-             <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="11">
+             <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="10">
                <children>
                   <Button fx:id="buttonMCP23017Get" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMCP23017Get" text="Get" HBox.hgrow="SOMETIMES" />
                   <Button fx:id="buttonMCP23017Set" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMCP23017Set" text="Set" HBox.hgrow="SOMETIMES" />
                </children>
             </HBox>
              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                    text="LCD" GridPane.rowIndex="9" GridPane.valignment="TOP">
+                    text="LCD" GridPane.rowIndex="8" GridPane.valignment="TOP">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
@@ -649,7 +647,7 @@
                      <Font name="System Bold" size="13.0"/>
                  </font>
             </Label>
-             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="9">
+             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="8">
                <columnConstraints>
                   <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
@@ -692,7 +690,7 @@
                    </Label>
                </children>
             </GridPane>
-             <GridPane GridPane.columnIndex="2" GridPane.rowIndex="9">
+             <GridPane GridPane.columnIndex="2" GridPane.rowIndex="8">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
@@ -708,7 +706,7 @@
                   <Button fx:id="buttonLCDReset" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onLCDReset" text="Reset" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
             </GridPane>
-             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="18">
+             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="17">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
@@ -981,8 +979,8 @@
                   </Circle>
                </children>
             </GridPane>
-             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="19"/>
-             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="20">
+             <Separator GridPane.columnSpan="2147483647" GridPane.rowIndex="18"/>
+             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="19">
                  <columnConstraints>
                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
@@ -1158,7 +1156,7 @@
                  </children>
              </GridPane>
              <Label alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-                    minWidth="-Infinity" text="WS281x&#10;Light" wrapText="true" GridPane.rowIndex="20"
+                    minWidth="-Infinity" text="WS281x&#10;Light" wrapText="true" GridPane.rowIndex="19"
                     GridPane.valignment="TOP">
                  <padding>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
@@ -1167,7 +1165,7 @@
                      <Font name="System Bold" size="13.0"/>
                  </font>
              </Label>
-             <GridPane GridPane.columnIndex="2" GridPane.rowIndex="20">
+             <GridPane GridPane.columnIndex="2" GridPane.rowIndex="19">
                  <columnConstraints>
                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
@@ -1187,7 +1185,7 @@
                  </children>
              </GridPane>
              <Button maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false"
-                     onAction="#onTxClear" text="Clear" GridPane.columnIndex="2" GridPane.rowIndex="22"
+                     onAction="#onTxClear" text="Clear" GridPane.columnIndex="2" GridPane.rowIndex="21"
                      GridPane.valignment="TOP"/>
              <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2"/>
              <Button fx:id="buttonUSBConnect" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
