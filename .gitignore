@@ -1,6 +1,8 @@
 .DS_Store
-/.idea
+/.idea/
+/.directory
 target/
 *.iml
 *.log
 *.log.*
+*.txt
