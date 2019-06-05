@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
+import kotlin.random.Random
 
 /**
  * USB communicator, embedded version.
@@ -37,6 +38,7 @@ object USBCommunicator {
 
 	private val outboundExecutor = Executors.newSingleThreadExecutor()
 	private var outboundThread: Thread? = null
+	private var pingCounter = 0
 
 	val isConnected
 		get() = serialPort?.isOpened == true
@@ -64,9 +66,9 @@ object USBCommunicator {
 						LOGGER.debug("Inbound: CRC: ${"0x%02X".format(lastChecksum)}")
 					}
 					else -> {
+						listeners.forEach { Platform.runLater { it.onMessageReceived(Channel.USB, data) } }
 					}
 				}
-				listeners.forEach { Platform.runLater { it.onMessageReceived(Channel.USB, data) } }
 			}
 		} catch (e: ArrayIndexOutOfBoundsException) {
 			LOGGER.info(e.message, e)
@@ -100,6 +102,7 @@ object USBCommunicator {
 
 		override fun serialEvent(event: SerialPortEvent) {
 			if (event.isRXCHAR) { // If data is available
+				pingCounter = -5
 				val (length, data) = event.eventValue
 						.takeIf { it > 0 }
 						?.let { it to serialPort?.readBytes(it) }
@@ -113,25 +116,25 @@ object USBCommunicator {
 								if (byte.toUInt() == 0xAA) {
 									this.state = State.LENGTH_HIGH
 									this.chksum = 0
-									LOGGER.debug("USB> 0xAA: IDLE -> LENGTH_HIGH")
+									//LOGGER.debug("USB> 0xAA: IDLE -> LENGTH_HIGH")
 								}
 							}
 							State.LENGTH_HIGH -> {
 								this.length = byte.toUInt() * 256
 								this.chksum += byte.toUInt()
 								this.state = State.LENGTH_LOW
-								LOGGER.debug("USB> 0x%02X: LENGTH_HIGH -> LENGTH_LOW".format(byte))
+								//LOGGER.debug("USB> 0x%02X: LENGTH_HIGH -> LENGTH_LOW".format(byte))
 							}
 							State.LENGTH_LOW -> {
 								this.length += byte.toUInt()
 								if (this.length > buffer.size) {
 									this.state = State.IDLE
-									LOGGER.debug("USB> 0x%02X: LENGTH_LOW -> IDLE".format(byte))
+									//LOGGER.debug("USB> 0x%02X: LENGTH_LOW -> IDLE".format(byte))
 								} else {
 									this.chksum += byte.toUInt()
 									this.index = 0
 									this.state = State.ADDITIONAL
-									LOGGER.debug("USB> 0x%02X: LENGTH_LOW -> ADDITIONAL".format(byte))
+									//LOGGER.debug("USB> 0x%02X: LENGTH_LOW -> ADDITIONAL".format(byte))
 								}
 							}
 							State.ADDITIONAL -> {
@@ -141,7 +144,7 @@ object USBCommunicator {
 								} else {
 									this.chksum = (0xFF - this.chksum + 1) and 0xFF
 									if (this.chksum == byte.toUInt()) {
-										LOGGER.debug("USB> 0x%02X: checksum OK (0x%02X)".format(byte, this.chksum))
+										//LOGGER.debug("USB> 0x%02X: checksum OK (0x%02X)".format(byte, this.chksum))
 										processIncomingMessage(this.buffer.sliceArray(0 until this.length))
 									} else {
 										LOGGER.warn("USB> 0x%02X: Wrong checksum (0x%02X)".format(byte, this.chksum))
@@ -166,7 +169,7 @@ object USBCommunicator {
 
 					serialPort?.writeBytes(data.wrap())
 					LOGGER.debug("Outbound CRC: ${"0x%02X".format(chksum)} (${chksumQueue.size})")
-					listeners.forEach { Platform.runLater { it.onMessageSent(Channel.USB, data, messageQueue.size) } }
+					//listeners.forEach { Platform.runLater { it.onMessageSent(Channel.USB, data, messageQueue.size) } }
 				} else if (messageQueue.isNotEmpty()) {
 					val (message, delay) = messageQueue.peek()
 					val kind = MessageKind.values().find { it.code.toByte() == message[0] }
@@ -175,27 +178,54 @@ object USBCommunicator {
 					lastChecksum = null
 					serialPort?.writeBytes(data.wrap())
 
-					if (kind != MessageKind.IDD) {
-						var timeout = delay ?: 500 // default delay in ms
-						while (lastChecksum != checksum && timeout > 0) {
-							Thread.sleep(1)
-							timeout--
-						}
-
-						val correctlyReceived = checksum == lastChecksum
-						if (correctlyReceived) messageQueue.poll()
-						LOGGER.debug("Outbound [${"0x%02X".format(lastChecksum)}/${"0x%02X".format(checksum)}]:" +
-								" ${data.joinToString(" ") { "0x%02X".format(it) }}" +
-								" (remaining: ${messageQueue.size})")
-						if (correctlyReceived) {
-							listeners.forEach { Platform.runLater { it.onMessageSent(Channel.USB, data, messageQueue.size) } }
-							lastChecksum = null
-						}
-					} else {
-						messageQueue.poll() // IDD: Fire-and-Forget
+					var timeout = delay ?: 500 // default delay in ms
+					while (lastChecksum != checksum && timeout > 0) {
+						Thread.sleep(1)
+						timeout--
 					}
+
+					val correctlyReceived = checksum == lastChecksum
+					if (correctlyReceived) messageQueue.poll()
+					when (kind) {
+						MessageKind.CRC -> {
+						}
+						MessageKind.IDD -> {
+							if (correctlyReceived) {
+								pingCounter = -5
+							} else {
+								LOGGER.debug("${pingCounter}. ping not returned")
+								pingCounter++
+							}
+							if (pingCounter > 4) {
+								val portName = serialPort?.portName
+								disconnect()
+								if (portName != null) {
+									Thread.sleep(100L)
+									connect(portName)
+								}
+							}
+						}
+						else -> {
+							LOGGER.debug("Outbound [${"0x%02X".format(lastChecksum)}/${"0x%02X".format(checksum)}]:" +
+									" ${data.joinToString(" ") { "0x%02X".format(it) }}" +
+									" (remaining: ${messageQueue.size})")
+							if (correctlyReceived) listeners
+									.forEach { Platform.runLater { it.onMessageSent(Channel.USB, data, messageQueue.size) } }
+						}
+					}
+					if (correctlyReceived) lastChecksum = null
 				} else {
-					Thread.sleep(100L)
+					if (pingCounter < 0) {
+						Thread.sleep(100L)
+						pingCounter++
+					} else if (pingCounter == 0) {
+						messageQueue.add(byteArrayOf(MessageKind.IDD.code.toByte(), Random.nextBits(4).toByte()) to 500)
+					}
+					//pingCounter = if (pingCounter == 0xFF) 0 else pingCounter + 1
+					//val checksum = message.calculateChecksum()
+					//val data = listOf(checksum.toByte(), *message.toTypedArray()).toByteArray()
+					//serialPort?.writeBytes(data.wrap())
+					//Thread.sleep(100L)
 				}
 			}
 		} catch (e: IOException) {
@@ -231,7 +261,7 @@ object USBCommunicator {
 				listeners.forEach { Platform.runLater { it.onConnect(Channel.USB) } }
 				return true
 			} catch (e: SerialPortException) {
-				LOGGER.error(e.message, e)
+				LOGGER.error(e.message)
 				disconnect()
 			}
 		}
@@ -248,6 +278,8 @@ object USBCommunicator {
 			if (outboundThread?.isAlive == true) outboundThread?.interrupt()
 			serialPort?.closePort()
 			serialPort = null
+		} catch (e: SerialPortException) {
+			LOGGER.error(e.message)
 		} catch (e: IOException) {
 			LOGGER.error(e.message)
 		}

@@ -118,7 +118,7 @@ object BluetoothCommunicator {
 					outputStream?.write(data)
 					outputStream?.flush()
 					LOGGER.debug("Outbound CRC: ${"0x%02X".format(chksum)} (${chksumQueue.size})")
-					listeners.forEach { Platform.runLater { it.onMessageSent(Channel.BLUETOOTH, data, messageQueue.size) } }
+					//listeners.forEach { Platform.runLater { it.onMessageSent(Channel.BLUETOOTH, data, messageQueue.size) } }
 				} else if (messageQueue.isNotEmpty()) {
 					val (message, delay) = messageQueue.peek()
 					val kind = MessageKind.values().find { it.code.toByte() == message[0] }
@@ -128,25 +128,42 @@ object BluetoothCommunicator {
 					outputStream?.write(data)
 					outputStream?.flush()
 
-					if (kind != MessageKind.IDD) {
-						var timeout = delay ?: 500 // default delay in ms
-						while (lastChecksum != checksum && timeout > 0) {
-							Thread.sleep(1)
-							timeout--
-						}
-
-						val correctlyReceived = checksum == lastChecksum
-						if (correctlyReceived) messageQueue.poll()
-						LOGGER.debug("Outbound [${"0x%02X".format(lastChecksum)}/${"0x%02X".format(checksum)}]:" +
-								" ${data.joinToString(" ") { "0x%02X".format(it) }}" +
-								" (remaining: ${messageQueue.size})")
-						if (correctlyReceived) {
-							listeners.forEach { Platform.runLater { it.onMessageSent(Channel.BLUETOOTH, data, messageQueue.size) } }
-							lastChecksum = null
-						}
-					} else {
-						messageQueue.poll() // IDD: Fire-and-Forget
+					var timeout = delay ?: 500 // default delay in ms
+					while (lastChecksum != checksum && timeout > 0) {
+						Thread.sleep(1)
+						timeout--
 					}
+
+					val correctlyReceived = checksum == lastChecksum
+					if (correctlyReceived) messageQueue.poll()
+					when (kind) {
+						MessageKind.CRC -> {
+						}
+						MessageKind.IDD -> {
+							/*if (correctlyReceived) {
+								pingCounter = -5
+							} else {
+								LOGGER.debug("${USBCommunicator.pingCounter}. ping not returned")
+								pingCounter++
+							}
+							if (USBCommunicator.pingCounter > 4) {
+								val portName = serialPort?.portName
+								disconnect()
+								if (portName != null) {
+									Thread.sleep(100L)
+									connect(portName)
+								}
+							}*/
+						}
+						else -> {
+							LOGGER.debug("Outbound [${"0x%02X".format(lastChecksum)}/${"0x%02X".format(checksum)}]:" +
+									" ${data.joinToString(" ") { "0x%02X".format(it) }}" +
+									" (remaining: ${messageQueue.size})")
+							if (correctlyReceived) listeners
+									.forEach { Platform.runLater { it.onMessageSent(Channel.USB, data, messageQueue.size) } }
+						}
+					}
+					if (correctlyReceived) lastChecksum = null
 				} else {
 					Thread.sleep(100L)
 				}
@@ -185,9 +202,9 @@ object BluetoothCommunicator {
 								LOGGER.debug("Inbound: CRC: ${"0x%02X".format(lastChecksum)}")
 							}
 							else -> {
+								listeners.forEach { Platform.runLater { it.onMessageReceived(Channel.BLUETOOTH, buffer.copyOfRange(0, length)) } }
 							}
 						}
-						listeners.forEach { Platform.runLater { it.onMessageReceived(Channel.BLUETOOTH, buffer.copyOfRange(0, length)) } }
 					}
 				}
 			}

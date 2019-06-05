@@ -13,8 +13,8 @@ import javafx.stage.Stage
  */
 class Main : Application() {
 	companion object {
-		const val WIDTH = 880.0
-		const val HEIGHT = 1260.0
+		const val WIDTH = 890.0
+		const val HEIGHT = 1360.0
 
 		@JvmStatic
 		fun main(args: Array<String>) {
@@ -23,7 +23,7 @@ class Main : Application() {
 	}
 
 	override fun start(primaryStage: Stage) {
-		val root = Controller.getRoot()
+		val root = Controller.getRoot(primaryStage)
 		primaryStage.title = "Bluetooth tester | 2019 (c) Jan Kubovy"
 		primaryStage.scene = Scene(root, WIDTH, HEIGHT)
 		primaryStage.minWidth = WIDTH

@@ -9,11 +9,15 @@ import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import javafx.stage.FileChooser
+import javafx.stage.Stage
 import jssc.SerialPortList
+import java.io.File
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.min
+
 
 /**
  * Bluetooth tester's controller.
@@ -22,8 +26,9 @@ import kotlin.math.min
  */
 class Controller : CommunicatorListener {
 	companion object {
-		internal fun getRoot(): Parent = FXMLLoader(Controller::class.java.getResource("main.fxml"))
+		internal fun getRoot(primaryStage: Stage): Parent = FXMLLoader(Controller::class.java.getResource("main.fxml"))
 				.let { it.load<Parent>() to it.getController<Controller>() }
+				.also { (_, controller) -> controller.primaryStage = primaryStage }
 				.let { (root, _) -> root }
 	}
 
@@ -47,6 +52,10 @@ class Controller : CommunicatorListener {
 	@FXML private lateinit var comboBluetoothPairingMethod: ComboBox<PairingMethod>
 	@FXML private lateinit var buttonSettingsGet: Button
 	@FXML private lateinit var buttonSettingsSet: Button
+
+	@FXML private lateinit var textBluetoothEepromBlockSize: TextField
+	@FXML private lateinit var buttonBluetoothEepromDownload: Button
+	@FXML private lateinit var buttonBluetoothEepromUpload: Button
 
 	@FXML private lateinit var textDHT11Temperature: TextField
 	@FXML private lateinit var textDHT11Humidity: TextField
@@ -198,14 +207,18 @@ class Controller : CommunicatorListener {
 	@FXML private lateinit var areaTxMessage: TextArea
 	@FXML private lateinit var areaRxMessage: TextArea
 
+	private lateinit var primaryStage: Stage
 	private val rgbConfigs = mutableMapOf<Int, RGBConfig>()
 	private val ws281xPatterns = mutableMapOf<Int, WS281xPattern?>()
 	private val ws281xColors = mutableMapOf<Int, Color>()
 	private val ws281xDelays = mutableMapOf<Int, Int>()
 	private val ws281xMinMax = mutableMapOf<Int, Pair<Int, Int>>()
 	private val ws281xLights = mutableMapOf<Int, WS281xLightConfig>()
+	private var bluetoothEepromFile: File? = null
+	private val bluetoothEepromBuffer = ByteArray(8192)
+	private var bluetoothEepromChunkSize = 0
 
-	private var settingsEnabled: Boolean = false
+	private var bluetoothSettingsEnabled: Boolean = false
 		set(value) {
 			field = value
 			textBluetoothName.isDisable = !value
@@ -213,6 +226,14 @@ class Controller : CommunicatorListener {
 			comboBluetoothPairingMethod.isDisable = !value
 			buttonSettingsGet.isDisable = !value
 			buttonSettingsSet.isDisable = !value
+		}
+
+	private var bluetoothEepromEnabled: Boolean = false
+		set(value) {
+			field = value && radioUSB.isSelected
+			textBluetoothEepromBlockSize.isDisable = !value || !radioUSB.isSelected
+			buttonBluetoothEepromDownload.isDisable = !value || !radioUSB.isSelected
+			buttonBluetoothEepromUpload.isDisable = !value || !radioUSB.isSelected
 		}
 
 	private var dht11Enabled: Boolean = false
@@ -348,7 +369,8 @@ class Controller : CommunicatorListener {
 	private var enabled: Boolean = false
 		set(value) {
 			field = value
-			settingsEnabled = value
+			bluetoothSettingsEnabled = value
+			bluetoothEepromEnabled = USBCommunicator.isConnected && value
 			dht11Enabled = value
 			lcdEnabled = value
 			mcp23017Enabled = value
@@ -363,6 +385,8 @@ class Controller : CommunicatorListener {
 
 	@FXML
 	fun initialize() {
+		radioUSB.selectedProperty().addListener { _, _, value -> bluetoothEepromEnabled = USBCommunicator.isConnected && value }
+
 		choiceUSBPort.items.addAll(SerialPortList.getPortNames())
 		choiceUSBPort.selectionModel.select(0)
 
@@ -499,7 +523,7 @@ class Controller : CommunicatorListener {
 
 	@FXML
 	fun onBluetoothSettingsGet() {
-		//settingsEnabled = false
+		//bluetoothSettingsEnabled = false
 		MessageKind.BT_SETTINGS.sendGetRequest()
 	}
 
@@ -509,6 +533,32 @@ class Controller : CommunicatorListener {
 				*(listOf(comboBluetoothPairingMethod.selectionModel.selectedIndex)
 						+ textBluetoothPin.text.padEnd(6, 0.toChar()).substring(0, 6).map { it.toInt() }
 						+ textBluetoothName.text.padEnd(16, 0.toChar()).substring(0, 16).map { it.toInt() }).toTypedArray())
+	}
+
+	@FXML
+	fun onBluetoothEepromDownload() {
+		bluetoothEepromChunkSize = textBluetoothEepromBlockSize.text.toIntOrNull() ?: 255
+		if (bluetoothEepromChunkSize > 0) {
+			bluetoothEepromFile = FileChooser()
+					.apply { title = "Choose file to download the EEPROM to ..." }
+					.showSaveDialog(primaryStage)
+			if (bluetoothEepromFile != null) {
+				bluetoothEepromEnabled = false
+				progressUSB.progress = -1.0
+				(0 until bluetoothEepromBuffer.size).forEach { bluetoothEepromBuffer[it] = 0xFF.toByte() }
+				MessageKind.BT_EEPROM.sendGetRequest()
+			}
+		}
+	}
+
+	@FXML
+	fun onBluetoothEepromUpload() {
+		val fileChooser = FileChooser()
+		fileChooser.title = "Choose file to upload to the EEPROM ..."
+		bluetoothEepromFile = fileChooser.showOpenDialog(primaryStage)
+		if (bluetoothEepromFile != null) {
+			bluetoothSettingsEnabled = false
+		}
 	}
 
 	@FXML
@@ -883,22 +933,6 @@ class Controller : CommunicatorListener {
 		areaRxMessage.deselect()
 
 		when (message[1].toUInt()) {
-			MessageKind.BT_SETTINGS.code -> {
-				if (message.size == 25) {
-					PairingMethod.values()
-							.find { it.code == message[2].toUInt() }
-							?.also { comboBluetoothPairingMethod.selectionModel.select(it) }
-					textBluetoothPin.text = message
-							.toList().subList(3, 9)
-							.toByteArray()
-							.toString(Charset.defaultCharset())
-					textBluetoothName.text = message
-							.toList().subList(9, 25)
-							.toByteArray()
-							.toString(Charset.defaultCharset())
-					settingsEnabled = true
-				}
-			}
 			MessageKind.DHT11.code -> {
 				if (message.size == 4) {
 					textDHT11Temperature.text = "${message[2]}"
@@ -1062,6 +1096,61 @@ class Controller : CommunicatorListener {
 					ws281xLightEnabled = true
 				}
 			}
+			MessageKind.BT_SETTINGS.code -> {
+				if (message.size == 25) {
+					PairingMethod.values()
+							.find { it.code == message[2].toUInt() }
+							?.also { comboBluetoothPairingMethod.selectionModel.select(it) }
+					textBluetoothPin.text = message
+							.toList().subList(3, 9)
+							.toByteArray()
+							.toString(Charset.defaultCharset())
+					textBluetoothName.text = message
+							.toList().subList(9, 25)
+							.toByteArray()
+							.toString(Charset.defaultCharset())
+					bluetoothSettingsEnabled = true
+				}
+			}
+			MessageKind.BT_EEPROM.code -> {
+				if (message.size == 3 && message[2].toUInt() == 0xFF) { // Download finished
+					bluetoothEepromFile?.outputStream()?.bufferedWriter()?.use { writer ->
+						bluetoothEepromBuffer
+								.toList()
+								.chunked(bluetoothEepromChunkSize)
+								.mapIndexed { index, chunk -> index * bluetoothEepromChunkSize to chunk }
+								.toMap()
+								.forEach { (address, data) ->
+									val dataAligned = data.map { it.toUInt() }.toMutableList()
+									while (dataAligned.size < bluetoothEepromChunkSize) dataAligned.add(0xFF)
+									val line = "    0x%04X: %s | %s"
+											.format(address,
+													dataAligned.joinToString("") { "%02X".format(it) },
+													dataAligned.joinToString("") {
+														when (it) {
+															in 32..126 -> "${it.toChar()}"
+															0xFF -> "*"
+															else -> "."
+														}
+													})
+									println("EEPROM> ${line}")
+									writer.write("${line}\n")
+								}
+					}
+
+					progressUSB.progress = 0.0
+					bluetoothEepromEnabled = true
+					bluetoothEepromChunkSize = 0
+				} else if (message.size > 6 && (message[4].toUInt() * 256) + message[5].toUInt() == message.size - 6) {
+					bluetoothEepromEnabled = false
+					if (progressUSB.progress == 0.0) progressUSB.progress = -1.0
+					val address = (message[2].toUInt() * 256) + message[3].toUInt()
+					val length = (message[4].toUInt() * 256) + message[5].toUInt()
+					(0 until length).forEach { i ->
+						bluetoothEepromBuffer[address + i] = message[i + 5]
+					}
+				}
+			}
 		}
 		enabled = USBCommunicator.isConnected || BluetoothCommunicator.isConnected
 	}
@@ -1160,7 +1249,7 @@ class Controller : CommunicatorListener {
 	@Suppress("EXPERIMENTAL_API_USAGE")
 	private fun Byte.toUInt() = toUByte().toInt()
 
-	fun MessageKind.sendGetRequest(param: Int? = null) {
+	private fun MessageKind.sendGetRequest(param: Int? = null) {
 		if (param == null) {
 			if (radioUSB.isSelected) USBCommunicator.send(this)
 			else if (radioBluetooth.isSelected) BluetoothCommunicator.send(this)
@@ -1170,7 +1259,7 @@ class Controller : CommunicatorListener {
 		}
 	}
 
-	fun MessageKind.sendConfiguration(vararg params: Number) {
+	private fun MessageKind.sendConfiguration(vararg params: Number) {
 		if (radioUSB.isSelected) USBCommunicator.send(this, params.map { it.toByte() }.toByteArray())
 		else if (radioBluetooth.isSelected) BluetoothCommunicator.send(this, params.map { it.toByte() }.toByteArray())
 	}
