@@ -1,5 +1,6 @@
-package com.poterion.bluetooth.tester
+package com.poterion.bluetooth.tester.controllers
 
+import com.poterion.bluetooth.tester.data.DeviceConfiguration
 import com.poterion.monitor.api.communication.*
 import com.poterion.monitor.api.data.*
 import javafx.fxml.FXML
@@ -11,9 +12,9 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import javafx.util.StringConverter
 import jssc.SerialPortList
 import java.io.File
-import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.min
@@ -24,18 +25,25 @@ import kotlin.math.min
  *
  * @author Jan Kubovy <jan@kubovy.eu>
  */
-class Controller : CommunicatorListener {
+class DeviceController : CommunicatorListener {
 	companion object {
-		internal fun getRoot(primaryStage: Stage): Parent = FXMLLoader(Controller::class.java.getResource("main.fxml"))
-				.let { it.load<Parent>() to it.getController<Controller>() }
-				.also { (_, controller) -> controller.primaryStage = primaryStage }
-				.let { (root, _) -> root }
+		internal fun getRoot(primaryStage: Stage,
+							 configController: ConfigController,
+							 deviceConfiguration: DeviceConfiguration): Pair<Parent, DeviceController> =
+				FXMLLoader(DeviceController::class.java.getResource("device.fxml"))
+						.let { it.load<Parent>() to it.getController<DeviceController>() }
+						.also { (_, controller) ->
+							controller.primaryStage = primaryStage
+							controller.configController = configController
+							controller.deviceConfiguration = deviceConfiguration
+						}
+						.also { (_, controller) -> controller.startup() }
 	}
 
 	@FXML private lateinit var connection: ToggleGroup
 
 	@FXML private lateinit var radioUSB: RadioButton
-	@FXML private lateinit var choiceUSBPort: ChoiceBox<String>
+	@FXML private lateinit var choiceUSBPort: ChoiceBox<Pair<String, Boolean>>
 	@FXML private lateinit var labelUSBStatus: Label
 	@FXML private lateinit var progressUSB: ProgressBar
 	@FXML private lateinit var buttonUSBConnect: Button
@@ -208,6 +216,10 @@ class Controller : CommunicatorListener {
 	@FXML private lateinit var areaRxMessage: TextArea
 
 	private lateinit var primaryStage: Stage
+	private lateinit var configController: ConfigController
+	private lateinit var deviceConfiguration: DeviceConfiguration
+	private val usbCommunicator = USBCommunicator()
+	private val bluetoothCommunicator = BluetoothCommunicator()
 	private val rgbConfigs = mutableMapOf<Int, RGBConfig>()
 	private val ws281xPatterns = mutableMapOf<Int, WS281xPattern?>()
 	private val ws281xColors = mutableMapOf<Int, Color>()
@@ -217,6 +229,23 @@ class Controller : CommunicatorListener {
 	private var bluetoothEepromFile: File? = null
 	private val bluetoothEepromBuffer = ByteArray(8192)
 	private var bluetoothEepromChunkSize = 0
+
+	private var usbEnabled: Boolean = true
+		set(value) {
+			field = value
+			radioUSB.isDisable = !value
+			choiceUSBPort.isDisable = !value
+			buttonUSBConnect.isDisable = !value
+		}
+
+	private var bluetoothEnabled: Boolean = true
+		set(value) {
+			field = value
+			radioBluetooth.isDisable = !value
+			textBluetoothAddress.isDisable = !value
+			textBluetoothChannel.isDisable = !value
+			buttonBluetoothConnect.isDisable = !value
+		}
 
 	private var bluetoothSettingsEnabled: Boolean = false
 		set(value) {
@@ -369,30 +398,94 @@ class Controller : CommunicatorListener {
 	private var enabled: Boolean = false
 		set(value) {
 			field = value
-			bluetoothSettingsEnabled = value
-			bluetoothEepromEnabled = USBCommunicator.isConnected && value
-			dht11Enabled = value
-			lcdEnabled = value
-			mcp23017Enabled = value
-			pirEnabled = value
-			rgbEnabled = value
-			ws281xEnabled = value
-			ws281xLightEnabled = value
+			usbEnabled = deviceConfiguration.hasUSB
+			bluetoothSettingsEnabled = deviceConfiguration.hasBluetooth
+			bluetoothEepromEnabled = usbCommunicator.isConnected && value && deviceConfiguration.hasUSB && deviceConfiguration.hasBluetooth
+			dht11Enabled = value && deviceConfiguration.hasDHT11
+			lcdEnabled = value && deviceConfiguration.hasLCD
+			mcp23017Enabled = value && deviceConfiguration.hasMCP23017
+			pirEnabled = value && deviceConfiguration.hasPIR
+			rgbEnabled = value && deviceConfiguration.hasRGB
+			ws281xEnabled = value && deviceConfiguration.hasWS281xIndicators
+			ws281xLightEnabled = value && deviceConfiguration.hasWS281xLight
 			txEnabled = value
 			areaRxMessage.isDisable = !value
 			//buttonRxClear.isDisable = !value
 		}
 
+	private val bluetoothScannerListener = object : ScannerListener<BluetoothCommunicator.Descriptor> {
+		override fun onAvailableDevicesChanged(channel: Channel, devices: Collection<BluetoothCommunicator.Descriptor>) {
+			println(devices)
+		}
+	}
+
+	private val usbScannerListener = object : ScannerListener<USBCommunicator.Descriptor> {
+		override fun onAvailableDevicesChanged(channel: Channel, devices: Collection<USBCommunicator.Descriptor>) {
+			updateSerialPorts(devices)
+		}
+	}
+
 	@FXML
 	fun initialize() {
-		radioUSB.selectedProperty().addListener { _, _, value -> bluetoothEepromEnabled = USBCommunicator.isConnected && value }
+		/* USB */
+		choiceUSBPort.converter = object : StringConverter<Pair<String, Boolean>>() {
+			override fun toString(pair: Pair<String, Boolean>?): String? = pair
+					?.let { (port, available) -> "${port}${if (!available) " (disconnected)" else ""}" }
 
-		choiceUSBPort.items.addAll(SerialPortList.getPortNames())
-		choiceUSBPort.selectionModel.select(0)
+			override fun fromString(string: String?): Pair<String, Boolean>? = string
+					?.let { "(.*)( \\(disconnected\\))?".toRegex() }
+					?.matchEntire(string)
+					?.groupValues
+					?.takeIf { it.isNotEmpty() }
+					?.let { it[0] to (it.size <= 1 || it[1] != " (disconnected)") }
+		}
+		choiceUSBPort.selectionModel.selectedItemProperty().addListener { _, _, value ->
+			deviceConfiguration.usbDevice = value.first
+			configController.save()
+		}
+
+		/* BLUETOOTH */
+		textBluetoothAddress.focusedProperty().addListener { _, _, focus ->
+			if (!focus) {
+				deviceConfiguration.bluetoothAddress = textBluetoothAddress.text
+				configController.save()
+			}
+		}
+
+		textBluetoothChannel.focusedProperty().addListener { _, _, focus ->
+			if (!focus) {
+				deviceConfiguration.bluetoothChannel = textBluetoothChannel.text
+				configController.save()
+			}
+		}
+
+		textBluetoothEepromBlockSize.focusedProperty().addListener { _, _, focus ->
+			if (!focus) {
+				deviceConfiguration.bluetoothEepromBlockSize = textBluetoothEepromBlockSize.text.toIntOrNull()
+				configController.save()
+			}
+		}
 
 		comboBluetoothPairingMethod.items.addAll(PairingMethod.values())
 		comboBluetoothPairingMethod.selectionModel.select(0)
 
+		/* LCD */
+		textLCDLine.focusedProperty().addListener { _, _, focus ->
+			if (!focus) {
+				deviceConfiguration.lcdLine = textLCDLine.text.toIntOrNull()
+				configController.save()
+			}
+		}
+
+		/* MCP23017 */
+		textMCP23017Address.focusedProperty().addListener { _, _, focus ->
+			if (!focus) {
+				deviceConfiguration.mcp23017I2CAddress = textMCP23017Address.text.takeUnless { it.isNullOrEmpty() }
+				configController.save()
+			}
+		}
+
+		/* RGB */
 		comboRGBPattern.items.addAll(RGBPattern.values())
 		comboRGBPattern.selectionModel.selectedItemProperty().addListener { _, _, value ->
 			textRGBDelay.isDisable = value.delay == null
@@ -419,12 +512,64 @@ class Controller : CommunicatorListener {
 		comboRGBItem.valueProperty()
 				.addListener { _, _, value -> value?.toIntOrNull()?.let { rgbConfigs[it] }?.also { setRGB(it) } }
 
+		/* WS281x INDICATORS */
+		circleWS281x00.fill = Color.TRANSPARENT
+		circleWS281x01.fill = Color.TRANSPARENT
+		circleWS281x02.fill = Color.TRANSPARENT
+		circleWS281x03.fill = Color.TRANSPARENT
+		circleWS281x04.fill = Color.TRANSPARENT
+		circleWS281x05.fill = Color.TRANSPARENT
+		circleWS281x06.fill = Color.TRANSPARENT
+		circleWS281x07.fill = Color.TRANSPARENT
+		circleWS281x08.fill = Color.TRANSPARENT
+		circleWS281x09.fill = Color.TRANSPARENT
+		circleWS281x10.fill = Color.TRANSPARENT
+		circleWS281x11.fill = Color.TRANSPARENT
+		circleWS281x12.fill = Color.TRANSPARENT
+		circleWS281x13.fill = Color.TRANSPARENT
+		circleWS281x14.fill = Color.TRANSPARENT
+		circleWS281x15.fill = Color.TRANSPARENT
+		circleWS281x16.fill = Color.TRANSPARENT
+		circleWS281x17.fill = Color.TRANSPARENT
+		circleWS281x18.fill = Color.TRANSPARENT
+		circleWS281x19.fill = Color.TRANSPARENT
+		circleWS281x20.fill = Color.TRANSPARENT
+		circleWS281x21.fill = Color.TRANSPARENT
+		circleWS281x22.fill = Color.TRANSPARENT
+		circleWS281x23.fill = Color.TRANSPARENT
+		circleWS281x24.fill = Color.TRANSPARENT
+		circleWS281x25.fill = Color.TRANSPARENT
+		circleWS281x26.fill = Color.TRANSPARENT
+		circleWS281x27.fill = Color.TRANSPARENT
+		circleWS281x28.fill = Color.TRANSPARENT
+		circleWS281x29.fill = Color.TRANSPARENT
+		circleWS281x30.fill = Color.TRANSPARENT
+		circleWS281x31.fill = Color.TRANSPARENT
+		circleWS281x32.fill = Color.TRANSPARENT
+		circleWS281x33.fill = Color.TRANSPARENT
+		circleWS281x34.fill = Color.TRANSPARENT
+		circleWS281x35.fill = Color.TRANSPARENT
+		circleWS281x36.fill = Color.TRANSPARENT
+		circleWS281x37.fill = Color.TRANSPARENT
+		circleWS281x38.fill = Color.TRANSPARENT
+		circleWS281x39.fill = Color.TRANSPARENT
+		circleWS281x40.fill = Color.TRANSPARENT
+		circleWS281x41.fill = Color.TRANSPARENT
+		circleWS281x42.fill = Color.TRANSPARENT
+		circleWS281x43.fill = Color.TRANSPARENT
+		circleWS281x44.fill = Color.TRANSPARENT
+		circleWS281x45.fill = Color.TRANSPARENT
+		circleWS281x46.fill = Color.TRANSPARENT
+		circleWS281x47.fill = Color.TRANSPARENT
+		circleWS281x48.fill = Color.TRANSPARENT
+		circleWS281x49.fill = Color.TRANSPARENT
 		comboWS281xPattern.items.addAll(WS281xPattern.values())
 		comboWS281xPattern.selectionModel.select(0)
 		colorWS281x.value = Color.BLACK
 		colorWS281x.customColors.clear()
 		colorWS281x.customColors.addAll(Color.RED, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA)
 
+		/* WS281x LIGHT */
 		choiceWS281xLightRainbow.items.addAll("Colors", "Ranbow Row", "Rainbow Row Circle", "Rainbow", "Rainbow Circle")
 		choiceWS281xLightRainbow.selectionModel.selectedIndexProperty().addListener { _, _, value ->
 			colorWS281xLight1.isDisable = value.toInt() > 0
@@ -487,37 +632,73 @@ class Controller : CommunicatorListener {
 		comboWS281xLightItem.valueProperty()
 				.addListener { _, _, value -> value?.toIntOrNull()?.let { ws281xLights[it] }?.also { setWS281xLight(it) } }
 
-		textBluetoothAddress.text = "34:81:F4:1A:4B:29"
-		USBCommunicator.register(this)
-		BluetoothCommunicator.register(this)
-		enabled = USBCommunicator.isConnected || BluetoothCommunicator.isConnected
+
+		BluetoothScanner.register(bluetoothScannerListener)
+		USBScanner.register(usbScannerListener)
+
+		bluetoothCommunicator.register(this)
+		usbCommunicator.register(this)
+	}
+
+	private fun startup() {
+		when (deviceConfiguration.selectedChannel) {
+			Channel.USB -> radioUSB.isSelected = true
+			Channel.BLUETOOTH -> radioBluetooth.isSelected = true
+		}
+		radioBluetooth.selectedProperty().addListener { _, _, value ->
+			if (value) deviceConfiguration.selectedChannel = Channel.BLUETOOTH
+			configController.save()
+		}
+		radioUSB.selectedProperty().addListener { _, _, value ->
+			bluetoothEepromEnabled = usbCommunicator.isConnected && value
+			if (value) deviceConfiguration.selectedChannel = Channel.USB
+			configController.save()
+		}
+
+		updateSerialPorts(SerialPortList.getPortNames().map { USBCommunicator.Descriptor(it) })
+
+		textBluetoothAddress.text = deviceConfiguration.bluetoothAddress ?: ""
+		textBluetoothChannel.text = deviceConfiguration.bluetoothChannel ?: ""
+		textBluetoothEepromBlockSize.text = deviceConfiguration.bluetoothEepromBlockSize?.toString() ?: ""
+		textLCDLine.text = deviceConfiguration.lcdLine?.toString() ?: ""
+		textMCP23017Address.text = deviceConfiguration.mcp23017I2CAddress ?: ""
+
+		enabled = usbCommunicator.isConnected || bluetoothCommunicator.isConnected
+	}
+
+	fun shutdown() {
+		usbCommunicator.shutdown()
+		bluetoothCommunicator.shutdown()
 	}
 
 	@FXML
 	fun onUSBConnectionToggle() {
-		if (USBCommunicator.isConnected) {
-			USBCommunicator.disconnect()
-			buttonUSBConnect.text = "Connect"
-		} else {
+		if (usbCommunicator.isDisconnected) {
 			choiceUSBPort.value
-					?.let { USBCommunicator.connect(it) }
+					?.takeIf { it.second }
+					?.let { USBCommunicator.Descriptor(it.first) }
+					?.let { usbCommunicator.connect(it) }
 					?.takeIf { it }
 					?.also { buttonUSBConnect.text = "Cancel" }
+		} else {
+			usbCommunicator.disconnect()
+			buttonUSBConnect.text = "Connect"
 		}
 	}
 
 	@FXML
 	fun onBluetoothConnectionToggle() {
-		if (BluetoothCommunicator.isConnected || BluetoothCommunicator.isConnecting) {
-			BluetoothCommunicator.shouldReconnect = false
-			BluetoothCommunicator.disconnect()
-			buttonBluetoothConnect.text = "Connect"
-		} else {
-			val channel = textBluetoothChannel.text.toIntOrNull() ?: 6
-			BluetoothCommunicator.shouldReconnect = true
-			if (BluetoothCommunicator.connect(textBluetoothAddress.text, channel)) {
+		if (bluetoothCommunicator.isDisconnected) {
+			val descriptor = BluetoothCommunicator.Descriptor(
+					textBluetoothAddress.text,
+					textBluetoothChannel.text.toIntOrNull() ?: 6)
+
+			if (bluetoothCommunicator.connect(descriptor)) {
 				buttonBluetoothConnect.text = "Cancel"
 			}
+		} else {
+			bluetoothCommunicator.disconnect()
+			buttonBluetoothConnect.text = "Connect"
 		}
 	}
 
@@ -529,6 +710,8 @@ class Controller : CommunicatorListener {
 
 	@FXML
 	fun onBluetoothSettingsSet() {
+		deviceConfiguration.bluetoothName = textBluetoothName.text
+		configController.save()
 		MessageKind.BT_SETTINGS.sendConfiguration(
 				*(listOf(comboBluetoothPairingMethod.selectionModel.selectedIndex)
 						+ textBluetoothPin.text.padEnd(6, 0.toChar()).substring(0, 6).map { it.toInt() }
@@ -705,6 +888,13 @@ class Controller : CommunicatorListener {
 					colorWS281x.value.red * 255.0,
 					colorWS281x.value.green * 255.0,
 					colorWS281x.value.blue * 255.0)
+			(0 until 50).forEach { i ->
+				this::class.java.declaredFields
+						.find { it.name == "circleWS281x%02d".format(i) }
+						?.get(this)
+						?.let { it as? Circle }
+						?.fill = colorWS281x.value
+			}
 		} else {
 			MessageKind.WS281x.sendConfiguration(
 					led,
@@ -716,6 +906,11 @@ class Controller : CommunicatorListener {
 					(textWS281xDelay.text.toIntOrNull() ?: 50) % 256.0,
 					textWS281xMin.text.toIntOrNull() ?: 0,
 					textWS281xMax.text.toIntOrNull() ?: 255)
+			this::class.java.declaredFields
+					.find { it.name == "circleWS281x%02d".format(led) }
+					?.get(this)
+					?.let { it as? Circle }
+					?.fill = colorWS281x.value
 		}
 	}
 
@@ -834,7 +1029,7 @@ class Controller : CommunicatorListener {
 //				?.toIntOrNull()
 //				?.let { code -> MessageKind.values().find { it.code == code } }
 //				?.also { messageType ->
-//					BluetoothCommunicator.send(messageType, areaTxMessage.text
+//					bluetoothCommunicator.send(messageType, areaTxMessage.text
 //							.replace("[ \t\n\r]".toRegex(), "")
 //							.replace("0x([0-9A-Fa-f]{1,4})".toRegex()) {
 //								"${it.groups[1]?.value?.toIntOrNull(16)?.toChar() ?: ""}"
@@ -844,7 +1039,6 @@ class Controller : CommunicatorListener {
 //	}
 
 	override fun onConnecting(channel: Channel) {
-		super.onConnecting(channel)
 		when (channel) {
 			Channel.USB -> {
 				labelUSBStatus.text = "Connecting ..."
@@ -858,7 +1052,6 @@ class Controller : CommunicatorListener {
 	}
 
 	override fun onConnect(channel: Channel) {
-		super.onConnect(channel)
 		when (channel) {
 			Channel.USB -> {
 				labelUSBStatus.text = "Connected"
@@ -871,11 +1064,10 @@ class Controller : CommunicatorListener {
 				progressBluetooth.progress = 0.0
 			}
 		}
-		enabled = USBCommunicator.isConnected || BluetoothCommunicator.isConnected
+		enabled = usbCommunicator.isConnected || bluetoothCommunicator.isConnected
 	}
 
 	override fun onDisconnect(channel: Channel) {
-		super.onDisconnect(channel)
 		when (channel) {
 			Channel.USB -> {
 				labelUSBStatus.text = "Not Connected"
@@ -889,15 +1081,10 @@ class Controller : CommunicatorListener {
 			}
 		}
 		//labelPIR.text = "No update yet."
-		enabled = USBCommunicator.isConnected || BluetoothCommunicator.isConnected
-		val selected = choiceUSBPort.selectionModel.selectedItem
-		choiceUSBPort.items.clear()
-		choiceUSBPort.items.addAll(SerialPortList.getPortNames())
-		selected?.also { choiceUSBPort.selectionModel.select(it) }
+		enabled = usbCommunicator.isConnected || bluetoothCommunicator.isConnected
 	}
 
-	override fun onMessageReceived(channel: Channel, message: ByteArray) {
-		super.onMessageReceived(channel, message)
+	override fun onMessageReceived(channel: Channel, message: IntArray) {
 		val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
 
 		var chars = ""
@@ -924,7 +1111,7 @@ class Controller : CommunicatorListener {
 				.format(channel,
 						timestamp,
 						message[0],
-						MessageKind.values().find { it.code == message[1].toUInt() } ?: "",
+						MessageKind.values().find { it.code == message[1] } ?: "",
 						message[1],
 						message.size,
 						sb.toString())
@@ -932,7 +1119,39 @@ class Controller : CommunicatorListener {
 		areaRxMessage.selectPositionCaret(areaRxMessage.length)
 		areaRxMessage.deselect()
 
-		when (message[1].toUInt()) {
+		when (message[1]) {
+			MessageKind.IDD.code -> {
+				if (message.size > 3) when (message[3]) {
+					0x00 -> { // Capabilities
+						if (message.size > 4) byte2Bools(message[4]).also {
+							deviceConfiguration.hasBluetooth = it[0]
+							deviceConfiguration.hasUSB = it[1]
+							deviceConfiguration.hasDHT11 = it[2]
+							deviceConfiguration.hasLCD = it[3]
+							deviceConfiguration.hasMCP23017 = it[4]
+							deviceConfiguration.hasPIR = it[5]
+						}
+						if (message.size > 5) byte2Bools(message[5]).also {
+							deviceConfiguration.hasRGB = it[0]
+							deviceConfiguration.hasWS281xIndicators = it[1]
+							deviceConfiguration.hasWS281xLight = it[2]
+						}
+						configController.save()
+						enabled = enabled // refresh capabilities
+					}
+					0x01 -> { // Name
+						if (message.size > 4) {
+							deviceConfiguration.bluetoothName = message
+									.toList()
+									.subList(4, message.size)
+									.map { it.toChar() }
+									.toCharArray()
+									.let { String(it) }
+							configController.save()
+						}
+					}
+				}
+			}
 			MessageKind.DHT11.code -> {
 				if (message.size == 4) {
 					textDHT11Temperature.text = "${message[2]}"
@@ -942,13 +1161,14 @@ class Controller : CommunicatorListener {
 			}
 			MessageKind.LCD.code -> {
 				if (message.size > 4) {
-					val backlight = message[2].toUInt() > 0
-					val line = message[3].toUInt()
-					val columns = message[4].toUInt()
+					val backlight = message[2] > 0
+					val line = message[3]
+					val columns = message[4]
 					val string = (0 until columns)
 							.map { message[it + 5] }
-							.toByteArray()
-							.toString(Charset.defaultCharset())
+							.map { it.toChar() }
+							.toCharArray()
+							.let { String(it) }
 					val content = areaLCD.text
 							.split("\n".toRegex())
 							.mapIndexed { l, c -> l to c }
@@ -980,39 +1200,43 @@ class Controller : CommunicatorListener {
 					checkboxMCP23017B06.isIndeterminate = false
 					checkboxMCP23017B07.isIndeterminate = false
 
-					checkboxMCP23017A00.isSelected = (message[3].toUInt() and 0b00000001) > 0
-					checkboxMCP23017A01.isSelected = (message[3].toUInt() and 0b00000010) > 0
-					checkboxMCP23017A02.isSelected = (message[3].toUInt() and 0b00000100) > 0
-					checkboxMCP23017A03.isSelected = (message[3].toUInt() and 0b00001000) > 0
-					checkboxMCP23017A04.isSelected = (message[3].toUInt() and 0b00010000) > 0
-					checkboxMCP23017A05.isSelected = (message[3].toUInt() and 0b00100000) > 0
-					checkboxMCP23017A06.isSelected = (message[3].toUInt() and 0b01000000) > 0
-					checkboxMCP23017A07.isSelected = (message[3].toUInt() and 0b10000000) > 0
-					checkboxMCP23017B00.isSelected = (message[4].toUInt() and 0b00000001) > 0
-					checkboxMCP23017B01.isSelected = (message[4].toUInt() and 0b00000010) > 0
-					checkboxMCP23017B02.isSelected = (message[4].toUInt() and 0b00000100) > 0
-					checkboxMCP23017B03.isSelected = (message[4].toUInt() and 0b00001000) > 0
-					checkboxMCP23017B04.isSelected = (message[4].toUInt() and 0b00010000) > 0
-					checkboxMCP23017B05.isSelected = (message[4].toUInt() and 0b00100000) > 0
-					checkboxMCP23017B06.isSelected = (message[4].toUInt() and 0b01000000) > 0
-					checkboxMCP23017B07.isSelected = (message[4].toUInt() and 0b10000000) > 0
+					byte2Bools(message[3]).also {
+						checkboxMCP23017A00.isSelected = it[0]
+						checkboxMCP23017A01.isSelected = it[1]
+						checkboxMCP23017A02.isSelected = it[2]
+						checkboxMCP23017A03.isSelected = it[3]
+						checkboxMCP23017A04.isSelected = it[4]
+						checkboxMCP23017A05.isSelected = it[5]
+						checkboxMCP23017A06.isSelected = it[6]
+						checkboxMCP23017A07.isSelected = it[7]
+						labelMCP23017A00.text = if (it[0]) "1" else "0"
+						labelMCP23017A01.text = if (it[1]) "1" else "0"
+						labelMCP23017A02.text = if (it[2]) "1" else "0"
+						labelMCP23017A03.text = if (it[3]) "1" else "0"
+						labelMCP23017A04.text = if (it[4]) "1" else "0"
+						labelMCP23017A05.text = if (it[5]) "1" else "0"
+						labelMCP23017A06.text = if (it[6]) "1" else "0"
+						labelMCP23017A07.text = if (it[7]) "1" else "0"
+					}
+					byte2Bools(message[4]).also {
+						checkboxMCP23017B00.isSelected = it[0]
+						checkboxMCP23017B01.isSelected = it[1]
+						checkboxMCP23017B02.isSelected = it[2]
+						checkboxMCP23017B03.isSelected = it[3]
+						checkboxMCP23017B04.isSelected = it[4]
+						checkboxMCP23017B05.isSelected = it[5]
+						checkboxMCP23017B06.isSelected = it[6]
+						checkboxMCP23017B07.isSelected = it[7]
+						labelMCP23017B00.text = if (it[0]) "1" else "0"
+						labelMCP23017B01.text = if (it[1]) "1" else "0"
+						labelMCP23017B02.text = if (it[2]) "1" else "0"
+						labelMCP23017B03.text = if (it[3]) "1" else "0"
+						labelMCP23017B04.text = if (it[4]) "1" else "0"
+						labelMCP23017B05.text = if (it[5]) "1" else "0"
+						labelMCP23017B06.text = if (it[6]) "1" else "0"
+						labelMCP23017B07.text = if (it[7]) "1" else "0"
+					}
 
-					labelMCP23017A00.text = if ((message[3].toUInt() and 0b00000001) > 0) "1" else "0"
-					labelMCP23017A01.text = if ((message[3].toUInt() and 0b00000010) > 0) "1" else "0"
-					labelMCP23017A02.text = if ((message[3].toUInt() and 0b00000100) > 0) "1" else "0"
-					labelMCP23017A03.text = if ((message[3].toUInt() and 0b00001000) > 0) "1" else "0"
-					labelMCP23017A04.text = if ((message[3].toUInt() and 0b00010000) > 0) "1" else "0"
-					labelMCP23017A05.text = if ((message[3].toUInt() and 0b00100000) > 0) "1" else "0"
-					labelMCP23017A06.text = if ((message[3].toUInt() and 0b01000000) > 0) "1" else "0"
-					labelMCP23017A07.text = if ((message[3].toUInt() and 0b10000000) > 0) "1" else "0"
-					labelMCP23017B00.text = if ((message[4].toUInt() and 0b00000001) > 0) "1" else "0"
-					labelMCP23017B01.text = if ((message[4].toUInt() and 0b00000010) > 0) "1" else "0"
-					labelMCP23017B02.text = if ((message[4].toUInt() and 0b00000100) > 0) "1" else "0"
-					labelMCP23017B03.text = if ((message[4].toUInt() and 0b00001000) > 0) "1" else "0"
-					labelMCP23017B04.text = if ((message[4].toUInt() and 0b00010000) > 0) "1" else "0"
-					labelMCP23017B05.text = if ((message[4].toUInt() and 0b00100000) > 0) "1" else "0"
-					labelMCP23017B06.text = if ((message[4].toUInt() and 0b01000000) > 0) "1" else "0"
-					labelMCP23017B07.text = if ((message[4].toUInt() and 0b10000000) > 0) "1" else "0"
 					mcp23017Enabled = true
 				}
 			}
@@ -1023,18 +1247,18 @@ class Controller : CommunicatorListener {
 			}
 			MessageKind.RGB.code -> {
 				if (message.size == 13) {
-					textRGBListSize.text = "${message[2].toUInt()}"
+					textRGBListSize.text = "${message[2]}"
 
-					val index = message[3].toUInt()
-					val pattern = RGBPattern.values().find { it.code == message[4].toUInt() }
+					val index = message[3]
+					val pattern = RGBPattern.values().find { it.code == message[4] }
 					if (pattern != null) {
 						rgbConfigs[index] = RGBConfig(
 								pattern,
-								message[5].toUInt(), message[6].toUInt(), message[7].toUInt(),
-								(message[8].toUInt() * 256) + message[9].toUInt(),
-								message[10].toUInt(),
-								message[11].toUInt(),
-								message[12].toUInt())
+								message[5], message[6], message[7],
+								(message[8] * 256) + message[9],
+								message[10],
+								message[11],
+								message[12])
 						comboRGBItem.items.clear()
 						comboRGBItem.items.addAll(rgbConfigs.keys.sorted().map { "${it}" })
 						comboRGBItem.selectionModel.select("${index}")
@@ -1044,12 +1268,12 @@ class Controller : CommunicatorListener {
 			}
 			MessageKind.WS281x.code -> {
 				if (message.size == 12) {
-					//val count = message[2].toUInt()
-					val led = message[3].toUInt()
-					ws281xPatterns[led] = WS281xPattern.values().find { it.byteCode == message[4] }
-					ws281xColors[led] = Color.rgb(message[5].toUInt(), message[6].toUInt(), message[7].toUInt())
-					ws281xDelays[led] = (message[8].toUInt() * 256) + message[9].toUInt()
-					ws281xMinMax[led] = message[10].toUInt() to message[11].toUInt()
+					//val count = message[2]
+					val led = message[3]
+					ws281xPatterns[led] = WS281xPattern.values().find { it.code == message[4] }
+					ws281xColors[led] = Color.rgb(message[5], message[6], message[7])
+					ws281xDelays[led] = (message[8] * 256) + message[9]
+					ws281xMinMax[led] = message[10] to message[11]
 
 					textWS281xLED.text = "${led}"
 					ws281xPatterns[led]?.also { comboWS281xPattern.selectionModel.select(it) }
@@ -1069,26 +1293,26 @@ class Controller : CommunicatorListener {
 			}
 			MessageKind.WS281xLIGHT.code -> {
 				if (message.size == 33) {
-					textWS281xLightListSize.text = "${message[2].toUInt()}"
+					textWS281xLightListSize.text = "${message[2]}"
 
-					val index = message[3].toUInt()
-					val pattern = WS281xLightPattern.values().find { it.code == message[4].toUInt() }
+					val index = message[3]
+					val pattern = WS281xLightPattern.values().find { it.code == message[4] }
 					if (pattern != null) {
 						ws281xLights[index] = WS281xLightConfig(
 								pattern,
-								message[5].toUInt(), message[6].toUInt(), message[7].toUInt(),
-								message[8].toUInt(), message[9].toUInt(), message[10].toUInt(),
-								message[11].toUInt(), message[12].toUInt(), message[13].toUInt(),
-								message[14].toUInt(), message[15].toUInt(), message[16].toUInt(),
-								message[17].toUInt(), message[18].toUInt(), message[19].toUInt(),
-								message[20].toUInt(), message[21].toUInt(), message[22].toUInt(),
-								message[23].toUInt(), message[24].toUInt(), message[25].toUInt(),
-								(message[26].toUInt() * 256) + message[27].toUInt(),
-								message[28].toUInt(),
-								message[29].toUInt(),
-								message[30].toUInt(),
-								message[31].toUInt(),
-								message[32].toUInt())
+								message[5], message[6], message[7],
+								message[8], message[9], message[10],
+								message[11], message[12], message[13],
+								message[14], message[15], message[16],
+								message[17], message[18], message[19],
+								message[20], message[21], message[22],
+								message[23], message[24], message[25],
+								(message[26] * 256) + message[27],
+								message[28],
+								message[29],
+								message[30],
+								message[31],
+								message[32])
 						comboWS281xLightItem.items.clear()
 						comboWS281xLightItem.items.addAll(ws281xLights.keys.sorted().map { "${it}" })
 						comboWS281xLightItem.selectionModel.select("${index}")
@@ -1099,21 +1323,29 @@ class Controller : CommunicatorListener {
 			MessageKind.BT_SETTINGS.code -> {
 				if (message.size == 25) {
 					PairingMethod.values()
-							.find { it.code == message[2].toUInt() }
+							.find { it.code == message[2] }
 							?.also { comboBluetoothPairingMethod.selectionModel.select(it) }
 					textBluetoothPin.text = message
-							.toList().subList(3, 9)
-							.toByteArray()
-							.toString(Charset.defaultCharset())
+							.toList()
+							.subList(3, 9)
+							.map { it.toChar() }
+							.toCharArray()
+							.let { String(it) }
 					textBluetoothName.text = message
-							.toList().subList(9, 25)
-							.toByteArray()
-							.toString(Charset.defaultCharset())
+							.toList()
+							.subList(9, 25)
+							.map { it.toChar() }
+							.toCharArray()
+							.let { String(it) }
+
+					deviceConfiguration.bluetoothName = textBluetoothName.text
+					configController.save()
+
 					bluetoothSettingsEnabled = true
 				}
 			}
 			MessageKind.BT_EEPROM.code -> {
-				if (message.size == 3 && message[2].toUInt() == 0xFF) { // Download finished
+				if (message.size == 3 && message[2] == 0xFF) { // Download finished
 					bluetoothEepromFile?.outputStream()?.bufferedWriter()?.use { writer ->
 						bluetoothEepromBuffer
 								.toList()
@@ -1121,15 +1353,15 @@ class Controller : CommunicatorListener {
 								.mapIndexed { index, chunk -> index * bluetoothEepromChunkSize to chunk }
 								.toMap()
 								.forEach { (address, data) ->
-									val dataAligned = data.map { it.toUInt() }.toMutableList()
-									while (dataAligned.size < bluetoothEepromChunkSize) dataAligned.add(0xFF)
+									val dataAligned = data.map { it }.toMutableList()
+									while (dataAligned.size < bluetoothEepromChunkSize) dataAligned.add(0xFF.toByte())
 									val line = "    0x%04X: %s | %s"
 											.format(address,
 													dataAligned.joinToString("") { "%02X".format(it) },
 													dataAligned.joinToString("") {
 														when (it) {
 															in 32..126 -> "${it.toChar()}"
-															0xFF -> "*"
+															0xFF.toByte() -> "*"
 															else -> "."
 														}
 													})
@@ -1141,22 +1373,21 @@ class Controller : CommunicatorListener {
 					progressUSB.progress = 0.0
 					bluetoothEepromEnabled = true
 					bluetoothEepromChunkSize = 0
-				} else if (message.size > 6 && (message[4].toUInt() * 256) + message[5].toUInt() == message.size - 6) {
+				} else if (message.size > 6 && (message[4] * 256) + message[5] == message.size - 6) {
 					bluetoothEepromEnabled = false
 					if (progressUSB.progress == 0.0) progressUSB.progress = -1.0
-					val address = (message[2].toUInt() * 256) + message[3].toUInt()
-					val length = (message[4].toUInt() * 256) + message[5].toUInt()
+					val address = (message[2] * 256) + message[3]
+					val length = (message[4] * 256) + message[5]
 					(0 until length).forEach { i ->
-						bluetoothEepromBuffer[address + i] = message[i + 5]
+						bluetoothEepromBuffer[address + i] = message[i + 5].toByte()
 					}
 				}
 			}
 		}
-		enabled = USBCommunicator.isConnected || BluetoothCommunicator.isConnected
+		enabled = usbCommunicator.isConnected || bluetoothCommunicator.isConnected
 	}
 
-	override fun onMessageSent(channel: Channel, message: ByteArray, remaining: Int) {
-		super.onMessageSent(channel, message, remaining)
+	override fun onMessageSent(channel: Channel, message: IntArray, remaining: Int) {
 		val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
 
 		var chars = ""
@@ -1180,13 +1411,13 @@ class Controller : CommunicatorListener {
 
 		textTxCRC.text = "0x%02X".format(message[0])
 		textTxMessageType.text = if (message.isNotEmpty()) "%s [0x%02X]"
-				.format(MessageKind.values().find { it.code == message[1].toUInt() } ?: "", message[1]) else ""
+				.format(MessageKind.values().find { it.code == message[1] } ?: "", message[1]) else ""
 
 		areaTxMessage.text += "\n%s> %s [CRC: 0x%02X]: %s (0x%02X) with %d bytes: \n%s"
 				.format(channel,
 						timestamp,
 						message[0],
-						MessageKind.values().find { it.code == message[1].toUInt() } ?: "",
+						MessageKind.values().find { it.code == message[1] } ?: "",
 						message[1],
 						message.size,
 						sb.toString())
@@ -1246,22 +1477,45 @@ class Controller : CommunicatorListener {
 		textWS281xLightTimeout.text = "${lightConfig.timeout}"
 	}
 
-	@Suppress("EXPERIMENTAL_API_USAGE")
-	private fun Byte.toUInt() = toUByte().toInt()
+	private fun updateSerialPorts(devices: Collection<USBCommunicator.Descriptor>) {
+		val portNames = devices
+				.map { it.portName }
+				.map { it to true }
+				.toMutableList()
+
+		if (choiceUSBPort.items.filtered { it.second }.size != portNames.size
+				|| !choiceUSBPort.items.filter { it.second }.all { port -> portNames.any { port.first == it.first } }) {
+
+			deviceConfiguration.usbDevice
+					?.takeIf { device -> portNames.none { it.first == device } }
+					?.also { portNames.add(it to false) }
+
+			choiceUSBPort.items.clear()
+			choiceUSBPort.items.addAll(portNames.sortedBy { it.first })
+
+			val selected = choiceUSBPort.items.find { it.first == deviceConfiguration.usbDevice }
+
+			if (selected != null) {
+				choiceUSBPort.selectionModel.select(selected)
+			} else {
+				choiceUSBPort.selectionModel.select(0)
+			}
+		}
+	}
 
 	private fun MessageKind.sendGetRequest(param: Int? = null) {
 		if (param == null) {
-			if (radioUSB.isSelected) USBCommunicator.send(this)
-			else if (radioBluetooth.isSelected) BluetoothCommunicator.send(this)
+			if (radioUSB.isSelected) usbCommunicator.send(this)
+			else if (radioBluetooth.isSelected) bluetoothCommunicator.send(this)
 		} else {
-			if (radioUSB.isSelected) USBCommunicator.send(this, byteArrayOf(param.toByte()))
-			else if (radioBluetooth.isSelected) BluetoothCommunicator.send(this, byteArrayOf(param.toByte()))
+			if (radioUSB.isSelected) usbCommunicator.send(this, byteArrayOf(param.toByte()))
+			else if (radioBluetooth.isSelected) bluetoothCommunicator.send(this, byteArrayOf(param.toByte()))
 		}
 	}
 
 	private fun MessageKind.sendConfiguration(vararg params: Number) {
-		if (radioUSB.isSelected) USBCommunicator.send(this, params.map { it.toByte() }.toByteArray())
-		else if (radioBluetooth.isSelected) BluetoothCommunicator.send(this, params.map { it.toByte() }.toByteArray())
+		if (radioUSB.isSelected) usbCommunicator.send(this, params.map { it.toByte() }.toByteArray())
+		else if (radioBluetooth.isSelected) bluetoothCommunicator.send(this, params.map { it.toByte() }.toByteArray())
 	}
 
 

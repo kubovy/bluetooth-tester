@@ -1,5 +1,18 @@
 package com.poterion.monitor.api.communication
 
+/**
+ * Converts 8 bools to one byte.
+ *
+ * @param b7 Bit 7
+ * @param b6 Bit 6
+ * @param b5 Bit 5
+ * @param b4 Bit 4
+ * @param b3 Bit 3
+ * @param b2 Bit 2
+ * @param b1 Bit 1
+ * @param b0 Bit 0
+ * @return Composed byte.
+ */
 fun bools2Byte(b7: Boolean, b6: Boolean, b5: Boolean, b4: Boolean, b3: Boolean, b2: Boolean, b1: Boolean, b0: Boolean) =
 		(if (b7) 0b10000000 else 0b00000000) or
 				(if (b6) 0b01000000 else 0b00000000) or
@@ -10,5 +23,24 @@ fun bools2Byte(b7: Boolean, b6: Boolean, b5: Boolean, b4: Boolean, b3: Boolean, 
 				(if (b1) 0b00000010 else 0b00000000) or
 				(if (b0) 0b00000001 else 0b00000000)
 
+/**
+ * Converts a byte to an list of 8 bools.
+ *
+ * @param byte Byte to convert.
+ * @return List containing 8 bools corresponding to the 8 bits in a byte.
+ */
+fun byte2Bools(byte: Int) = listOf(
+		(byte and 0b00000001) > 0,
+		(byte and 0b00000010) > 0,
+		(byte and 0b00000100) > 0,
+		(byte and 0b00001000) > 0,
+		(byte and 0b00010000) > 0,
+		(byte and 0b00100000) > 0,
+		(byte and 0b01000000) > 0,
+		(byte and 0b10000000) > 0)
+
+/**
+ * Calculates a checksum.
+ */
 fun ByteArray.calculateChecksum() = (map { it.toInt() }.takeIf { it.isNotEmpty() }?.reduce { acc, i -> acc + i }
 		?: 0) and 0xFF

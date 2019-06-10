@@ -1,6 +1,6 @@
 package com.poterion.bluetooth.tester
 
-import com.poterion.monitor.api.communication.BluetoothCommunicator
+import com.poterion.bluetooth.tester.controllers.MainController
 import javafx.application.Application
 import javafx.application.Platform
 import javafx.scene.Scene
@@ -13,7 +13,7 @@ import javafx.stage.Stage
  */
 class Main : Application() {
 	companion object {
-		const val WIDTH = 890.0
+		const val WIDTH = 1200.0
 		const val HEIGHT = 1360.0
 
 		@JvmStatic
@@ -23,7 +23,7 @@ class Main : Application() {
 	}
 
 	override fun start(primaryStage: Stage) {
-		val root = Controller.getRoot(primaryStage)
+		val (root, controller) = MainController.getRoot(primaryStage)
 		primaryStage.title = "Bluetooth tester | 2019 (c) Jan Kubovy"
 		primaryStage.scene = Scene(root, WIDTH, HEIGHT)
 		primaryStage.minWidth = WIDTH
@@ -32,7 +32,7 @@ class Main : Application() {
 		//primaryStage.isResizable = false
 		primaryStage.show()
 		primaryStage.setOnCloseRequest {
-			BluetoothCommunicator.disconnect()
+			controller.shutdown()
 			Platform.exit()
 		}
 	}
