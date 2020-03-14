@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+          minWidth="-Infinity" vgap="5.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.poterion.bluetooth.tester.controllers.modules.LcdController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+        <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+    </rowConstraints>
+    <children>
+        <Label fx:id="labelTitle" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+               minWidth="-Infinity" text="LCD" GridPane.valignment="TOP">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <font>
+                <Font name="System Bold" size="13.0"/>
+            </font>
+        </Label>
+        <GridPane fx:id="gridContent" GridPane.columnIndex="1">
+            <columnConstraints>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="-Infinity" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+                <TextArea fx:id="areaLcd" maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity"
+                          prefHeight="75.0" prefWidth="180.0"
+                          promptText="................................................................................"
+                          GridPane.columnIndex="2" GridPane.rowSpan="2147483647">
+                    <font>
+                        <Font name="Monospaced Regular" size="13.0"/>
+                    </font>
+                </TextArea>
+                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                       minWidth="-Infinity" text="Line" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <TextField fx:id="textLcdLine" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308"
+                           minWidth="-Infinity" prefWidth="35.0" promptText="All" GridPane.columnIndex="1"
+                           GridPane.rowIndex="1">
+                    <GridPane.margin>
+                        <Insets right="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <CheckBox fx:id="checkboxLcdBacklight" indeterminate="true" maxHeight="-Infinity"
+                          maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
+                          mnemonicParsing="false" onAction="#onLcdBacklight" GridPane.columnIndex="1"
+                          GridPane.rowIndex="2"/>
+                <Label text="Backlight" GridPane.rowIndex="2">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                       minWidth="-Infinity" text="Display">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <ComboBox fx:id="comboLcdIndex" editable="true" prefWidth="75.0" promptText="0"
+                          GridPane.columnIndex="1"/>
+            </children>
+        </GridPane>
+        <GridPane fx:id="gridButtons" hgap="5.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" vgap="5.0"
+                  GridPane.columnIndex="2" GridPane.valignment="TOP">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="-Infinity" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="-Infinity" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+                <Button fx:id="buttonLcdGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                        onAction="#onLcdGet" text="Get"/>
+                <Button fx:id="buttonLcdSet" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                        onAction="#onLcdSet" text="Set" GridPane.columnIndex="1"/>
+                <Button fx:id="buttonLcdClear" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                        onAction="#onLcdClear" text="Clear" GridPane.rowIndex="1"/>
+                <Button fx:id="buttonLcdReset" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                        onAction="#onLcdReset" text="Reset" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            </children>
+        </GridPane>
+    </children>
+    <opaqueInsets>
+        <Insets/>
+    </opaqueInsets>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+    </padding>
+</GridPane>

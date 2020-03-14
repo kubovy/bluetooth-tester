@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+          minWidth="-Infinity" vgap="5.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.poterion.bluetooth.tester.controllers.modules.TemperatureController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+        <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+    </rowConstraints>
+    <children>
+        <Label fx:id="labelTitle" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+               minWidth="-Infinity" text="Temperature" GridPane.valignment="TOP">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <font>
+                <Font name="System Bold" size="13.0"/>
+            </font>
+        </Label>
+        <HBox fx:id="hboxContent" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+              minWidth="-Infinity" GridPane.columnIndex="1">
+            <children>
+                <ComboBox fx:id="comboTempIndex" editable="true" prefWidth="75.0" promptText="0"/>
+                <Separator orientation="VERTICAL"/>
+                <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Temperature:">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <TextField fx:id="textTemperature" alignment="CENTER_RIGHT" editable="false" maxWidth="-Infinity"
+                           minWidth="-Infinity" prefWidth="45.0" promptText="?"/>
+                <Label maxWidth="1.7976931348623157E308" text="°C">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <Separator orientation="VERTICAL">
+                    <HBox.margin>
+                        <Insets left="5.0"/>
+                    </HBox.margin>
+                </Separator>
+                <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Humidity:" HBox.hgrow="NEVER">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <TextField fx:id="textHumidity" alignment="CENTER_RIGHT" editable="false"
+                           maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="45.0" promptText="?"/>
+                <Label maxWidth="1.7976931348623157E308" text="\%">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+            </children>
+        </HBox>
+        <Button fx:id="buttonTemperatureGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                onAction="#onTemperatureGet" text="Get" GridPane.columnIndex="2"/>
+    </children>
+    <opaqueInsets>
+        <Insets/>
+    </opaqueInsets>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+    </padding>
+</GridPane>

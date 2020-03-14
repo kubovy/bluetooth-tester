@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+          minWidth="-Infinity" vgap="5.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.poterion.bluetooth.tester.controllers.modules.RawController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+        <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+    </rowConstraints>
+    <children>
+        <Label fx:id="labelTx" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+               minWidth="-Infinity" text="TX" GridPane.valignment="TOP">
+            <GridPane.margin>
+                <Insets/>
+            </GridPane.margin>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <font>
+                <Font name="System Bold" size="13.0"/>
+            </font>
+        </Label>
+        <HBox fx:id="hboxContent" GridPane.columnIndex="1">
+            <children>
+                <Label text="Message Kind">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <TextField fx:id="textTxMessageType" editable="false" maxHeight="-Infinity"
+                           maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
+                           promptText="0x00" HBox.hgrow="ALWAYS"/>
+                <Label text="CRC">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <TextField fx:id="textTxCRC" alignment="CENTER_RIGHT" editable="false" maxHeight="-Infinity"
+                           maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="50.0"
+                           promptText="0x00" HBox.hgrow="NEVER"/>
+            </children>
+        </HBox>
+        <TextArea fx:id="areaTxMessage" editable="false" maxHeight="1.7976931348623157E308"
+                  maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" promptText="No logs yet"
+                  GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+            <font>
+                <Font name="Monospaced Regular" size="10.0"/>
+            </font>
+        </TextArea>
+        <TextArea fx:id="areaRxMessage" editable="false" maxHeight="1.7976931348623157E308"
+                  maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" promptText="No logs yet"
+                  GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+            <font>
+                <Font name="Monospaced Regular" size="10.0"/>
+            </font>
+        </TextArea>
+        <Label fx:id="labelRx" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+               minWidth="-Infinity" text="RX" GridPane.rowIndex="2" GridPane.valignment="TOP">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <font>
+                <Font name="System Bold" size="13.0"/>
+            </font>
+        </Label>
+        <Button fx:id="buttonRxClear" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onRxClear"
+                text="Clear" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP"/>
+        <Button fx:id="buttonTxClear" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false"
+                onAction="#onTxClear" text="Clear" GridPane.columnIndex="2" GridPane.rowIndex="1"
+                GridPane.valignment="TOP"/>
+    </children>
+    <opaqueInsets>
+        <Insets/>
+    </opaqueInsets>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+    </padding>
+</GridPane>

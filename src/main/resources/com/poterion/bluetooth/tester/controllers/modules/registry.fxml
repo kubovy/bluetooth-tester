@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+          minWidth="-Infinity" vgap="5.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.poterion.bluetooth.tester.controllers.modules.RegistryController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+        <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+    </rowConstraints>
+    <children>
+        <Label fx:id="labelTitle" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+               minWidth="-Infinity" text="Registry" GridPane.valignment="TOP">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <font>
+                <Font name="System Bold" size="13.0"/>
+            </font>
+        </Label>
+        <GridPane fx:id="gridContent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                  minHeight="-Infinity" minWidth="-Infinity" GridPane.columnIndex="1">
+            <columnConstraints>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+            </rowConstraints>
+            <children>
+                <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                       minWidth="-Infinity" text="I2C Address" GridPane.rowSpan="2147483647">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <TextField fx:id="textRegistryAddress" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308"
+                           minWidth="-Infinity" prefWidth="75.0" promptText="0x20" GridPane.columnIndex="1"
+                           GridPane.rowIndex="1" GridPane.rowSpan="2147483647"/>
+                <CheckBox fx:id="checkboxRegistry07" alignment="CENTER" contentDisplay="GRAPHIC_ONLY"
+                          indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                          minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="7"
+                          GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                <CheckBox fx:id="checkboxRegistry06" alignment="CENTER" contentDisplay="GRAPHIC_ONLY"
+                          indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                          minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="8"
+                          GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                <CheckBox fx:id="checkboxRegistry05" alignment="CENTER" contentDisplay="GRAPHIC_ONLY"
+                          indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                          minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="9"
+                          GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                <CheckBox fx:id="checkboxRegistry04" alignment="CENTER" contentDisplay="GRAPHIC_ONLY"
+                          indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                          minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="10"
+                          GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                <CheckBox fx:id="checkboxRegistry03" alignment="CENTER" contentDisplay="GRAPHIC_ONLY"
+                          indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                          minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="11"
+                          GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                <CheckBox fx:id="checkboxRegistry02" alignment="CENTER" contentDisplay="GRAPHIC_ONLY"
+                          indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                          minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="12"
+                          GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                <CheckBox fx:id="checkboxRegistry01" alignment="CENTER" contentDisplay="GRAPHIC_ONLY"
+                          indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                          minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="13"
+                          GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                <CheckBox fx:id="checkboxRegistry00" alignment="CENTER" contentDisplay="GRAPHIC_ONLY"
+                          indeterminate="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                          minWidth="-Infinity" mnemonicParsing="false" GridPane.columnIndex="14"
+                          GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                <Label fx:id="labelRegistry07" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0"
+                       GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <Label fx:id="labelRegistry06" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0"
+                       GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <Label fx:id="labelRegistry05" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0"
+                       GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <Label fx:id="labelRegistry04" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0"
+                       GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <Label fx:id="labelRegistry03" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0"
+                       GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <Label fx:id="labelRegistry02" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0"
+                       GridPane.columnIndex="12" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <Label fx:id="labelRegistry01" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0"
+                       GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <Label fx:id="labelRegistry00" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity"
+                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="0"
+                       GridPane.columnIndex="14" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </Label>
+                <Separator maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" orientation="VERTICAL" GridPane.columnIndex="15"
+                           GridPane.halignment="CENTER" GridPane.rowSpan="2147483647">
+                    <GridPane.margin>
+                        <Insets left="5.0"/>
+                    </GridPane.margin>
+                </Separator>
+                <Separator maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" orientation="VERTICAL" GridPane.columnIndex="2"
+                           GridPane.halignment="CENTER" GridPane.rowSpan="2147483647">
+                    <padding>
+                        <Insets left="5.0"/>
+                    </padding>
+                </Separator>
+                <TextField fx:id="textRegistryRegistry" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308"
+                           minWidth="-Infinity" prefWidth="75.0" promptText="0x00" GridPane.columnIndex="5"
+                           GridPane.rowIndex="1" GridPane.rowSpan="2147483647"/>
+                <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                       text="Registry:" GridPane.columnIndex="4" GridPane.rowIndex="1" GridPane.rowSpan="2147483647"/>
+                <Separator maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" orientation="VERTICAL" GridPane.columnIndex="6"
+                           GridPane.halignment="CENTER" GridPane.rowSpan="2147483647">
+                    <GridPane.margin>
+                        <Insets left="5.0"/>
+                    </GridPane.margin>
+                </Separator>
+            </children>
+        </GridPane>
+        <HBox fx:id="hboxButtons" alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
+              spacing="5.0" GridPane.columnIndex="2">
+            <children>
+                <Button fx:id="buttonRegistryGet" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                        onAction="#onRegistryGet" text="Get" HBox.hgrow="SOMETIMES"/>
+                <Button fx:id="buttonRegistrySet" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                        onAction="#onRegistrySet" text="Set" HBox.hgrow="SOMETIMES"/>
+            </children>
+        </HBox>
+    </children>
+    <opaqueInsets>
+        <Insets/>
+    </opaqueInsets>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+    </padding>
+</GridPane>

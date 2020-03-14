@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+          minWidth="-Infinity" vgap="5.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.poterion.bluetooth.tester.controllers.modules.IoController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+        <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER"/>
+    </rowConstraints>
+    <children>
+        <Label fx:id="labelTitle" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+               minWidth="-Infinity" text="GPIO" GridPane.valignment="TOP">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <font>
+                <Font name="System Bold" size="13.0"/>
+            </font>
+        </Label>
+        <GridPane fx:id="gridContent" GridPane.columnIndex="1">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="25.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+                <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                       text="#">
+                    <GridPane.margin>
+                        <Insets right="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0"
+                       GridPane.columnIndex="1"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="1"
+                       GridPane.columnIndex="2"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="2"
+                       GridPane.columnIndex="3"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="3"
+                       GridPane.columnIndex="4"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="4"
+                       GridPane.columnIndex="5"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="5"
+                       GridPane.columnIndex="6"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="6"
+                       GridPane.columnIndex="7"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="7"
+                       GridPane.columnIndex="8"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="8"
+                       GridPane.columnIndex="9"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="9"
+                       GridPane.columnIndex="10"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="10"
+                       GridPane.columnIndex="11"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="11"
+                       GridPane.columnIndex="12"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="12"
+                       GridPane.columnIndex="13"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="13"
+                       GridPane.columnIndex="14"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="14"
+                       GridPane.columnIndex="15"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="15"
+                       GridPane.columnIndex="16"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="16"
+                       GridPane.columnIndex="17"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="17"
+                       GridPane.columnIndex="18"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="18"
+                       GridPane.columnIndex="19"/>
+                <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="19"
+                       GridPane.columnIndex="20"/>
+                <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                       text="State" GridPane.rowIndex="1">
+                    <GridPane.margin>
+                        <Insets right="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <CheckBox fx:id="checkboxGpio00" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio01" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio02" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio03" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio04" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio05" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="6" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio06" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="7" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio07" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="8" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio08" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="9" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio09" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="10" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio10" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="11" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio11" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="12" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio12" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="13" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio13" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="14" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio14" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="15" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio15" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="16" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio16" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="17" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio17" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="18" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio18" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="19" GridPane.rowIndex="1"/>
+                <CheckBox fx:id="checkboxGpio19" alignment="CENTER" allowIndeterminate="true" indeterminate="true"
+                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                          onAction="#onGpioSet" GridPane.columnIndex="20" GridPane.rowIndex="1"/>
+                <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                       text="Get" GridPane.rowIndex="2">
+                    <GridPane.margin>
+                        <Insets right="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <Button fx:id="buttonGpioGet00" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet01" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet02" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet03" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="4" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet04" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="5" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet05" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="6" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet06" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="7" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet07" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="8" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet08" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="9" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet09" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="10" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet10" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="11" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet11" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="12" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet12" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="13" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet13" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="14" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet14" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="15" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet15" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="16" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet16" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="17" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet17" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="18" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet18" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="19" GridPane.rowIndex="2"/>
+                <Button fx:id="buttonGpioGet19" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#onGpioGet" GridPane.columnIndex="20" GridPane.rowIndex="2"/>
+            </children>
+        </GridPane>
+    </children>
+    <opaqueInsets>
+        <Insets/>
+    </opaqueInsets>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+    </padding>
+</GridPane>
