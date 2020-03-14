@@ -16,17 +16,22 @@
  ******************************************************************************/
 package com.poterion.bluetooth.tester.controllers.modules
 
-import com.poterion.bluetooth.tester.*
+import com.poterion.bluetooth.tester.INDEFINED
 import com.poterion.bluetooth.tester.controllers.ConfigController
 import com.poterion.bluetooth.tester.data.DeviceConfiguration
+import com.poterion.bluetooth.tester.select
+import com.poterion.bluetooth.tester.updateCount
 import com.poterion.communication.serial.communicator.BluetoothCommunicator
 import com.poterion.communication.serial.communicator.Channel
 import com.poterion.communication.serial.communicator.USBCommunicator
 import com.poterion.communication.serial.extensions.RgbLightCommunicatorExtension
 import com.poterion.communication.serial.listeners.RgbLightCommunicatorListener
 import com.poterion.communication.serial.payload.ColorOrder
+import com.poterion.communication.serial.payload.RgbColor
 import com.poterion.communication.serial.payload.RgbLightConfiguration
 import com.poterion.communication.serial.payload.RgbLightPattern
+import com.poterion.communication.serial.toColor
+import com.poterion.communication.serial.toRGBColor
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -142,7 +147,7 @@ class LightController : ModuleControllerInterface, RgbLightCommunicatorListener 
 	override val rows: List<Triple<Node?, Node?, Node?>>
 		get() = listOf(Triple(labelTitle, gridContent, gridButtons))
 
-	private val ws281xLights: MutableMap<Int, MutableMap<Int, RgbLightConfiguration>> = mutableMapOf()
+	private val lightsCache: MutableMap<Int, MutableMap<Int, RgbLightConfiguration>> = mutableMapOf()
 
 	@FXML
 	fun initialize() {
@@ -207,12 +212,11 @@ class LightController : ModuleControllerInterface, RgbLightCommunicatorListener 
 		comboLightItem.selectionModel.selectedItemProperty().addListener { _, _, value ->
 			val num = comboLightIndex.value?.toIntOrNull() ?: 0
 			val index = value?.toIntOrNull() ?: 0
-			val lightConfig = ws281xLights
+			val lightConfig = lightsCache
 					.getOrPut(num) { mutableMapOf() }
 					.getOrPut(index) {
 						RgbLightConfiguration(RgbLightPattern.OFF,
-								java.awt.Color.BLACK, java.awt.Color.BLACK, java.awt.Color.BLACK, java.awt.Color.BLACK,
-								java.awt.Color.BLACK, java.awt.Color.BLACK, java.awt.Color.BLACK,
+								RgbColor(), RgbColor(), RgbColor(), RgbColor(), RgbColor(), RgbColor(), RgbColor(),
 								100, 3, 0, 0, 255, 1)
 					}
 			setLight(lightConfig)
@@ -220,7 +224,7 @@ class LightController : ModuleControllerInterface, RgbLightCommunicatorListener 
 		comboLightItem.valueProperty().addListener { _, _, value ->
 			val num = comboLightIndex.value?.toIntOrNull() ?: 0
 			val index = value?.toIntOrNull() ?: 0
-			val lightConfig = ws281xLights.getOrPut(num) { mutableMapOf() }[index]
+			val lightConfig = lightsCache.getOrPut(num) { mutableMapOf() }[index]
 			if (lightConfig != null) setLight(lightConfig)
 		}
 	}
@@ -242,14 +246,16 @@ class LightController : ModuleControllerInterface, RgbLightCommunicatorListener 
 	fun onLightAdd() {
 		val num = comboLightIndex.value?.toIntOrNull() ?: 0
 		val pattern = comboLightPattern.selectionModel.selectedItem
-		val rainbow = choiceLightRainbow.selectionModel.selectedIndex.takeIf { it > 0 }?.toAwtRainbowColor()
-		val color1 = rainbow ?: colorLight1.value.toAwtColor()
-		val color2 = rainbow ?: colorLight2.value.toAwtColor()
-		val color3 = rainbow ?: colorLight3.value.toAwtColor()
-		val color4 = rainbow ?: colorLight4.value.toAwtColor()
-		val color5 = rainbow ?: colorLight5.value.toAwtColor()
-		val color6 = rainbow ?: colorLight6.value.toAwtColor()
-		val color7 = rainbow ?: colorLight7.value.toAwtColor()
+		val rainbow = choiceLightRainbow.selectionModel.selectedIndex
+				.takeIf { it > 0 }
+				?.let { RgbColor(0x01, 0x02, it) }
+		val color1 = rainbow ?: colorLight1.value.toRGBColor()
+		val color2 = rainbow ?: colorLight2.value.toRGBColor()
+		val color3 = rainbow ?: colorLight3.value.toRGBColor()
+		val color4 = rainbow ?: colorLight4.value.toRGBColor()
+		val color5 = rainbow ?: colorLight5.value.toRGBColor()
+		val color6 = rainbow ?: colorLight6.value.toRGBColor()
+		val color7 = rainbow ?: colorLight7.value.toRGBColor()
 		communicator?.sendRgbLightSet(
 				num,
 				comboLightPattern.value,
@@ -267,14 +273,16 @@ class LightController : ModuleControllerInterface, RgbLightCommunicatorListener 
 	fun onLightSet() {
 		val num = comboLightIndex.value?.toIntOrNull() ?: 0
 		val pattern = comboLightPattern.selectionModel.selectedItem
-		val rainbow = choiceLightRainbow.selectionModel.selectedIndex.takeIf { it > 0 }?.toAwtRainbowColor()
-		val color1 = rainbow ?: colorLight1.value.toAwtColor()
-		val color2 = rainbow ?: colorLight2.value.toAwtColor()
-		val color3 = rainbow ?: colorLight3.value.toAwtColor()
-		val color4 = rainbow ?: colorLight4.value.toAwtColor()
-		val color5 = rainbow ?: colorLight5.value.toAwtColor()
-		val color6 = rainbow ?: colorLight6.value.toAwtColor()
-		val color7 = rainbow ?: colorLight7.value.toAwtColor()
+		val rainbow = choiceLightRainbow.selectionModel.selectedIndex
+				.takeIf { it > 0 }
+				?.let { RgbColor(0x01, 0x02, it) }
+		val color1 = rainbow ?: colorLight1.value.toRGBColor()
+		val color2 = rainbow ?: colorLight2.value.toRGBColor()
+		val color3 = rainbow ?: colorLight3.value.toRGBColor()
+		val color4 = rainbow ?: colorLight4.value.toRGBColor()
+		val color5 = rainbow ?: colorLight5.value.toRGBColor()
+		val color6 = rainbow ?: colorLight6.value.toRGBColor()
+		val color7 = rainbow ?: colorLight7.value.toRGBColor()
 		communicator?.sendRgbLightSet(
 				num,
 				pattern,
@@ -299,7 +307,7 @@ class LightController : ModuleControllerInterface, RgbLightCommunicatorListener 
 										 configuration: RgbLightConfiguration) = Platform.runLater {
 		//rgbLightEnabled = true
 		textLightListSize.text = "${count}"
-		ws281xLights.getOrPut(num) { mutableMapOf() }[index] = configuration
+		lightsCache.getOrPut(num) { mutableMapOf() }[index] = configuration
 		comboLightItem.updateCount(count)
 		comboLightItem.selectionModel.select("${index}")
 	}

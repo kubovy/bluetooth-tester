@@ -23,6 +23,8 @@ import com.poterion.communication.serial.communicator.BluetoothCommunicator
 import com.poterion.communication.serial.communicator.Channel
 import com.poterion.communication.serial.communicator.USBCommunicator
 import com.poterion.communication.serial.extensions.BluetoothCommunicatorExtension
+import com.poterion.communication.serial.payload.DeviceCapabilities
+import com.poterion.utils.kotlin.noop
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -130,8 +132,19 @@ class RawController : ModuleControllerInterface {
 		areaRxMessage.text = ""
 	}
 
+	override fun onConnecting(channel: Channel) = noop()
+
+	override fun onConnect(channel: Channel) = noop()
+
+	override fun onConnectionReady(channel: Channel) = noop()
+
+	override fun onDisconnect(channel: Channel) = noop()
+
+	override fun onDeviceCapabilitiesChanged(channel: Channel, capabilities: DeviceCapabilities) = noop()
+
+	override fun onDeviceNameChanged(channel: Channel, name: String) = noop()
+
 	override fun onMessageReceived(channel: Channel, message: IntArray) = Platform.runLater {
-		super.onMessageReceived(channel, message)
 		val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
 		var chars = ""
 		val sb = StringBuilder()
@@ -161,8 +174,9 @@ class RawController : ModuleControllerInterface {
 		areaRxMessage.deselect()
 	}
 
+	override fun onMessagePrepare(channel: Channel) = noop()
+
 	override fun onMessageSent(channel: Channel, message: IntArray, remaining: Int) = Platform.runLater {
-		super.onMessageSent(channel, message, remaining)
 		val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
 
 		var chars = ""

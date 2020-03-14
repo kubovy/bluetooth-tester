@@ -16,10 +16,7 @@
  ******************************************************************************/
 package com.poterion.bluetooth.tester.controllers.modules
 
-import com.poterion.communication.serial.communicator.Channel
 import com.poterion.communication.serial.listeners.CommunicatorListener
-import com.poterion.communication.serial.payload.DeviceCapabilities
-import com.poterion.utils.kotlin.noop
 import javafx.scene.Node
 
 /**
@@ -31,22 +28,4 @@ interface ModuleControllerInterface : CommunicatorListener {
 	var enabled: Boolean
 
 	val rows: List<Triple<Node?, Node?, Node?>>
-
-	override fun onConnecting(channel: Channel) = noop()
-
-	override fun onConnect(channel: Channel) = noop()
-
-	override fun onConnectionReady(channel: Channel) = noop()
-
-	override fun onDisconnect(channel: Channel) = noop()
-
-	override fun onDeviceCapabilitiesChanged(channel: Channel, capabilities: DeviceCapabilities) = noop()
-
-	override fun onDeviceNameChanged(channel: Channel, name: String) = noop()
-
-	override fun onMessageReceived(channel: Channel, message: IntArray) = noop()
-
-	override fun onMessagePrepare(channel: Channel) = noop()
-
-	override fun onMessageSent(channel: Channel, message: IntArray, remaining: Int) = noop()
 }

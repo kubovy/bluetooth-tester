@@ -18,8 +18,6 @@ package com.poterion.bluetooth.tester.controllers.modules
 
 import com.poterion.bluetooth.tester.controllers.ConfigController
 import com.poterion.bluetooth.tester.data.DeviceConfiguration
-import com.poterion.bluetooth.tester.toAwtColor
-import com.poterion.bluetooth.tester.toColor
 import com.poterion.bluetooth.tester.updateCount
 import com.poterion.communication.serial.communicator.BluetoothCommunicator
 import com.poterion.communication.serial.communicator.Channel
@@ -27,8 +25,11 @@ import com.poterion.communication.serial.communicator.USBCommunicator
 import com.poterion.communication.serial.extensions.RgbIndicatorCommunicatorExtension
 import com.poterion.communication.serial.listeners.RgbIndicatorCommunicatorListener
 import com.poterion.communication.serial.payload.ColorOrder
+import com.poterion.communication.serial.payload.RgbColor
 import com.poterion.communication.serial.payload.RgbIndicatorConfiguration
 import com.poterion.communication.serial.payload.RgbPattern
+import com.poterion.communication.serial.toColor
+import com.poterion.communication.serial.toRGBColor
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -177,10 +178,10 @@ class IndicatorsController : ModuleControllerInterface, RgbIndicatorCommunicator
 				Triple(labelTitle, gridContent, vboxButtons),
 				Triple(null, gridState, null))
 
-	private val ws281xPatterns: MutableMap<Int, MutableMap<Int, RgbPattern>> = mutableMapOf()
-	private val ws281xColors: MutableMap<Int, MutableMap<Int, Color>> = mutableMapOf()
-	private val ws281xDelays: MutableMap<Int, MutableMap<Int, Int?>> = mutableMapOf()
-	private val ws281xMinMax: MutableMap<Int, MutableMap<Int, Pair<Int?, Int?>>> = mutableMapOf()
+	private val patternCache: MutableMap<Int, MutableMap<Int, RgbPattern>> = mutableMapOf()
+	private val colorCache: MutableMap<Int, MutableMap<Int, RgbColor>> = mutableMapOf()
+	private val delayCache: MutableMap<Int, MutableMap<Int, Int?>> = mutableMapOf()
+	private val minMaxCache: MutableMap<Int, MutableMap<Int, Pair<Int?, Int?>>> = mutableMapOf()
 
 	@FXML
 	fun initialize() {
@@ -260,7 +261,7 @@ class IndicatorsController : ModuleControllerInterface, RgbIndicatorCommunicator
 	fun onIndicatorsSet() {
 		val num = comboIndicatorsIndex.value?.toIntOrNull() ?: 0
 		val led = textIndicatorsLed.text.toIntOrNull()
-		val color = colorIndicators.value.toAwtColor()
+		val color = colorIndicators.value.toRGBColor()
 		if (led == null) {
 			communicator?.sendRgbIndicatorSetAll(num, color)
 			(0 until 50).forEach { i ->
@@ -295,25 +296,26 @@ class IndicatorsController : ModuleControllerInterface, RgbIndicatorCommunicator
 			?.also { led ->
 				val num = comboIndicatorsIndex.value?.toIntOrNull() ?: 0
 				textIndicatorsLed.text = "${led}"
-				val pattern = ws281xPatterns
+				val pattern = patternCache
 						.getOrPut(num) { mutableMapOf() }
 						.getOrPut(led) { RgbPattern.OFF }
 				comboIndicatorsPattern.selectionModel.select(pattern)
-				colorIndicators.value = ws281xColors
+				colorIndicators.value = colorCache
 						.getOrPut(num) { mutableMapOf() }
-						.getOrPut(led) { Color.BLACK }
-				textIndicatorsDelay.text = ws281xDelays
+						.getOrPut(led) { RgbColor() }
+						.toColor()
+				textIndicatorsDelay.text = delayCache
 						.getOrPut(num) { mutableMapOf() }
 						.getOrPut(led) { pattern.delay }
 						?.toString()
 						?: ""
-				textIndicatorsMin.text = ws281xMinMax
+				textIndicatorsMin.text = minMaxCache
 						.getOrPut(num) { mutableMapOf() }
 						.getOrPut(led) { pattern.min to pattern.max }
 						.first
 						?.toString()
 						?: ""
-				textIndicatorsMax.text = ws281xMinMax
+				textIndicatorsMax.text = minMaxCache
 						.getOrPut(num) { mutableMapOf() }
 						.getOrPut(led) { pattern.min to pattern.max }
 						.second
@@ -331,15 +333,15 @@ class IndicatorsController : ModuleControllerInterface, RgbIndicatorCommunicator
 											 index: Int,
 											 configuration: RgbIndicatorConfiguration) = Platform.runLater {
 		//rgbIndicatorsEnabled = true
-		val color = configuration.color.toColor()
-		ws281xPatterns.getOrPut(num) { mutableMapOf() }[index] = configuration.pattern
-		ws281xColors.getOrPut(num) { mutableMapOf() }[index] = color
-		ws281xDelays.getOrPut(num) { mutableMapOf() }[index] = configuration.delay
-		ws281xMinMax.getOrPut(num) { mutableMapOf() }[index] = configuration.minimum to configuration.maximum
+		val color = configuration.color
+		patternCache.getOrPut(num) { mutableMapOf() }[index] = configuration.pattern
+		colorCache.getOrPut(num) { mutableMapOf() }[index] = color
+		delayCache.getOrPut(num) { mutableMapOf() }[index] = configuration.delay
+		minMaxCache.getOrPut(num) { mutableMapOf() }[index] = configuration.minimum to configuration.maximum
 
 		textIndicatorsLed.text = "${index}"
 		comboIndicatorsPattern.selectionModel.select(configuration.pattern)
-		colorIndicators.value = color
+		colorIndicators.value = color.toColor()
 		textIndicatorsDelay.text = "${configuration.delay}"
 		textIndicatorsMin.text = "${configuration.minimum}"
 		textIndicatorsMax.text = "${configuration.maximum}"
@@ -349,7 +351,7 @@ class IndicatorsController : ModuleControllerInterface, RgbIndicatorCommunicator
 					.find { it.name == "circleWS281x%02d".format(led) }
 					?.get(this)
 					?.let { it as? Circle }
-					?.fill = ws281xColors.getOrPut(num) { mutableMapOf() }.getOrDefault(led, Color.TRANSPARENT)
+					?.fill = colorCache.getOrPut(num) { mutableMapOf() }[led]?.toColor() ?: Color.TRANSPARENT
 		}
 	}
 }

@@ -18,7 +18,6 @@ package com.poterion.bluetooth.tester
 
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
-import javafx.scene.paint.Color
 
 fun TextField.getHexInt() = "0x(\\d+)".toRegex()
 		.matchEntire(text)
@@ -26,12 +25,6 @@ fun TextField.getHexInt() = "0x(\\d+)".toRegex()
 		?.groupValues
 		?.get(1)
 		?.toInt(16)
-
-fun java.awt.Color.toColor() = Color.rgb(red, green, blue)
-
-fun Color.toAwtColor() = java.awt.Color(red.toFloat(), green.toFloat(), blue.toFloat())
-
-fun Int.toAwtRainbowColor() = java.awt.Color(0x01, 0x02, this)
 
 fun ComboBox<String>.updateCount(count: Int) {
 	val selected = value?.toIntOrNull() ?: 0

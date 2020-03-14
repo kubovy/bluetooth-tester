@@ -16,17 +16,22 @@
  ******************************************************************************/
 package com.poterion.bluetooth.tester.controllers.modules
 
-import com.poterion.bluetooth.tester.*
+import com.poterion.bluetooth.tester.INDEFINED
 import com.poterion.bluetooth.tester.controllers.ConfigController
 import com.poterion.bluetooth.tester.data.DeviceConfiguration
+import com.poterion.bluetooth.tester.select
+import com.poterion.bluetooth.tester.updateCount
 import com.poterion.communication.serial.communicator.BluetoothCommunicator
 import com.poterion.communication.serial.communicator.Channel
 import com.poterion.communication.serial.communicator.USBCommunicator
 import com.poterion.communication.serial.extensions.RgbStripCommunicatorExtension
 import com.poterion.communication.serial.listeners.RgbStripCommunicatorListener
 import com.poterion.communication.serial.payload.ColorOrder
+import com.poterion.communication.serial.payload.RgbColor
 import com.poterion.communication.serial.payload.RgbPattern
 import com.poterion.communication.serial.payload.RgbStripConfiguration
+import com.poterion.communication.serial.toColor
+import com.poterion.communication.serial.toRGBColor
 import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -125,7 +130,7 @@ class RgbStripController : ModuleControllerInterface, RgbStripCommunicatorListen
 	override val rows: List<Triple<Node?, Node?, Node?>>
 		get() = listOf(Triple(labelTitle, gridContent, gridButtons))
 
-	private val rgbConfigs: MutableMap<Int, MutableMap<Int, RgbStripConfiguration>> = mutableMapOf()
+	private val configCache: MutableMap<Int, MutableMap<Int, RgbStripConfiguration>> = mutableMapOf()
 
 	@FXML
 	fun initialize() {
@@ -154,15 +159,15 @@ class RgbStripController : ModuleControllerInterface, RgbStripCommunicatorListen
 		comboRgbItem.selectionModel.selectedItemProperty().addListener { _, _, value ->
 			val num = comboRgbIndex.value?.toIntOrNull() ?: 0
 			val index = value?.toIntOrNull() ?: 0
-			val rgbConfig = rgbConfigs
+			val rgbConfig = configCache
 					.getOrPut(num) { mutableMapOf() }
-					.getOrPut(index) { RgbStripConfiguration(RgbPattern.OFF, java.awt.Color.BLACK, 0, 0, 255, 1) }
+					.getOrPut(index) { RgbStripConfiguration(RgbPattern.OFF, RgbColor(), 0, 0, 255, 1) }
 			setRgb(rgbConfig)
 		}
 		comboRgbItem.valueProperty().addListener { _, _, value ->
 			val num = comboRgbIndex.value?.toIntOrNull() ?: 0
 			val index = value?.toIntOrNull() ?: 0
-			val rgbConfig = rgbConfigs.getOrPut(num) { mutableMapOf() }[index]
+			val rgbConfig = configCache.getOrPut(num) { mutableMapOf() }[index]
 			if (rgbConfig != null) setRgb(rgbConfig)
 		}
 	}
@@ -189,11 +194,8 @@ class RgbStripController : ModuleControllerInterface, RgbStripCommunicatorListen
 	fun onRgbAdd() {
 		val num = comboRgbIndex.value?.toIntOrNull() ?: 0
 		val pattern = comboRgbPattern.selectionModel.selectedItem
-		val color = colorRgb.value.toAwtColor()
-		communicator?.sendRgbStripConfiguration(
-				num,
-				pattern,
-				color,
+		val color = colorRgb.value.toRGBColor()
+		communicator?.sendRgbStripConfiguration(num, pattern, color,
 				textRgbDelay.text.toIntOrNull() ?: pattern.delay ?: 100,
 				textRgbMin.text.toIntOrNull() ?: pattern.min ?: 0,
 				textRgbMax.text.toIntOrNull() ?: pattern.max ?: 255,
@@ -205,11 +207,8 @@ class RgbStripController : ModuleControllerInterface, RgbStripCommunicatorListen
 	fun onRgbSet() {
 		val num = comboRgbIndex.value?.toIntOrNull() ?: 0
 		val pattern = comboRgbPattern.selectionModel.selectedItem
-		val color = colorRgb.value.toAwtColor()
-		communicator?.sendRgbStripConfiguration(
-				num,
-				pattern,
-				color,
+		val color = colorRgb.value.toRGBColor()
+		communicator?.sendRgbStripConfiguration(num, pattern, color,
 				textRgbDelay.text.toIntOrNull() ?: pattern.delay ?: 100,
 				textRgbMin.text.toIntOrNull() ?: pattern.min ?: 0,
 				textRgbMax.text.toIntOrNull() ?: 255,
@@ -228,7 +227,7 @@ class RgbStripController : ModuleControllerInterface, RgbStripCommunicatorListen
 										 configuration: RgbStripConfiguration) = Platform.runLater {
 		//rgbStripEnabled = true
 		textRgbListSize.text = "${count}"
-		rgbConfigs.getOrPut(num) { mutableMapOf() }[index] = configuration
+		configCache.getOrPut(num) { mutableMapOf() }[index] = configuration
 		comboRgbItem.updateCount(count)
 		comboRgbItem.selectionModel.select("${index}")
 	}
