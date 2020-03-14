@@ -1,8 +1,17 @@
 .DS_Store
 /.idea/
 /.directory
+/.gradle/
+/bundles/
+/gradle/wrapper/gradle-wrapper.jar
+build/
 target/
+out/
+/jdk/
 *.iml
 *.log
 *.log.*
 *.txt
+/*.html
+/*.jnlp
+/config*.yaml

@@ -1,0 +1,5 @@
+rootProject.name = 'bluetooth-tester'
+// Libs
+include 'kotlin-utils'
+include 'javafx-utils'
+include 'serial-communication'

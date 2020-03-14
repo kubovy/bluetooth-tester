@@ -1,0 +1,10 @@
+[submodule "serial-communication"]
+	path = serial-communication
+	url = https://github.com/kubovy/serial-communication.git
+[submodule "kotlin-utils"]
+	path = kotlin-utils
+	url = https://github.com/kubovy/kotlin-utils.git
+[submodule "javafx-utils"]
+	path = javafx-utils
+	url = https://github.com/kubovy/javafx-utils.git
+
