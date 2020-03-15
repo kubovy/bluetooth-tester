@@ -26,10 +26,7 @@ import com.poterion.communication.serial.communicator.Channel
 import com.poterion.communication.serial.communicator.USBCommunicator
 import com.poterion.communication.serial.extensions.RgbLightCommunicatorExtension
 import com.poterion.communication.serial.listeners.RgbLightCommunicatorListener
-import com.poterion.communication.serial.payload.ColorOrder
-import com.poterion.communication.serial.payload.RgbColor
-import com.poterion.communication.serial.payload.RgbLightConfiguration
-import com.poterion.communication.serial.payload.RgbLightPattern
+import com.poterion.communication.serial.payload.*
 import com.poterion.communication.serial.toColor
 import com.poterion.communication.serial.toRGBColor
 import javafx.application.Platform
@@ -151,14 +148,14 @@ class LightController : ModuleControllerInterface, RgbLightCommunicatorListener 
 
 	@FXML
 	fun initialize() {
-		choiceLightRainbow.items.addAll("Colors", "Ranbow Row", "Rainbow Row Circle", "Rainbow", "Rainbow Circle")
+		choiceLightRainbow.items.addAll("Colors", "Rainbow Row", "Rainbow Row Circle", "Rainbow", "Rainbow Circle")
 		choiceLightRainbow.selectionModel.selectedIndexProperty().addListener { _, _, value ->
 			colorLight1.isDisable = value.toInt() > 0
 			colorLight2.isDisable = value.toInt() > 0
 			colorLight3.isDisable = value.toInt() > 0
 			colorLight4.isDisable = value.toInt() > 0
-			colorLight5.isDisable = value.toInt() > 0
-			colorLight6.isDisable = value.toInt() > 0
+			//colorLight5.isDisable = value.toInt() > 0
+			//colorLight6.isDisable = value.toInt() > 0
 			colorLight7.isDisable = value.toInt() > 0
 		}
 		choiceLightRainbow.selectionModel.select(0)
@@ -217,7 +214,8 @@ class LightController : ModuleControllerInterface, RgbLightCommunicatorListener 
 					.getOrPut(index) {
 						RgbLightConfiguration(RgbLightPattern.OFF,
 								RgbColor(), RgbColor(), RgbColor(), RgbColor(), RgbColor(), RgbColor(), RgbColor(),
-								100, 3, 0, 0, 255, 1)
+								100, 3, 0, 0, 255, 1,
+								Rainbow.NO_RAINBOW.code)
 					}
 			setLight(lightConfig)
 		}
@@ -244,55 +242,47 @@ class LightController : ModuleControllerInterface, RgbLightCommunicatorListener 
 
 	@FXML
 	fun onLightAdd() {
-		val num = comboLightIndex.value?.toIntOrNull() ?: 0
 		val pattern = comboLightPattern.selectionModel.selectedItem
-		val rainbow = choiceLightRainbow.selectionModel.selectedIndex
-				.takeIf { it > 0 }
-				?.let { RgbColor(0x01, 0x02, it) }
-		val color1 = rainbow ?: colorLight1.value.toRGBColor()
-		val color2 = rainbow ?: colorLight2.value.toRGBColor()
-		val color3 = rainbow ?: colorLight3.value.toRGBColor()
-		val color4 = rainbow ?: colorLight4.value.toRGBColor()
-		val color5 = rainbow ?: colorLight5.value.toRGBColor()
-		val color6 = rainbow ?: colorLight6.value.toRGBColor()
-		val color7 = rainbow ?: colorLight7.value.toRGBColor()
 		communicator?.sendRgbLightSet(
-				num,
+				comboLightIndex.value?.toIntOrNull() ?: 0,
 				comboLightPattern.value,
-				color1, color2, color3, color4, color5, color6, color7,
+				colorLight1.value.toRGBColor(),
+				colorLight2.value.toRGBColor(),
+				colorLight3.value.toRGBColor(),
+				colorLight4.value.toRGBColor(),
+				colorLight5.value.toRGBColor(),
+				colorLight6.value.toRGBColor(),
+				colorLight7.value.toRGBColor(),
 				textLightDelay.text.toIntOrNull() ?: pattern.delay ?: 10,
 				textLightWidth.text.toIntOrNull() ?: pattern.width ?: 3,
 				textLightFading.text.toIntOrNull() ?: pattern.fading ?: 0,
 				textLightMin.text.toIntOrNull() ?: pattern.min ?: 0,
 				textLightMax.text.toIntOrNull() ?: pattern.max ?: 255,
 				textLightTimeout.text.toIntOrNull() ?: pattern.timeout ?: INDEFINED,
+				choiceLightRainbow.selectionModel.selectedIndex,
 				false)
 	}
 
 	@FXML
 	fun onLightSet() {
-		val num = comboLightIndex.value?.toIntOrNull() ?: 0
 		val pattern = comboLightPattern.selectionModel.selectedItem
-		val rainbow = choiceLightRainbow.selectionModel.selectedIndex
-				.takeIf { it > 0 }
-				?.let { RgbColor(0x01, 0x02, it) }
-		val color1 = rainbow ?: colorLight1.value.toRGBColor()
-		val color2 = rainbow ?: colorLight2.value.toRGBColor()
-		val color3 = rainbow ?: colorLight3.value.toRGBColor()
-		val color4 = rainbow ?: colorLight4.value.toRGBColor()
-		val color5 = rainbow ?: colorLight5.value.toRGBColor()
-		val color6 = rainbow ?: colorLight6.value.toRGBColor()
-		val color7 = rainbow ?: colorLight7.value.toRGBColor()
 		communicator?.sendRgbLightSet(
-				num,
+				comboLightIndex.value?.toIntOrNull() ?: 0,
 				pattern,
-				color1, color2, color3, color4, color5, color6, color7,
+				colorLight1.value.toRGBColor(),
+				colorLight2.value.toRGBColor(),
+				colorLight3.value.toRGBColor(),
+				colorLight4.value.toRGBColor(),
+				colorLight5.value.toRGBColor(),
+				colorLight6.value.toRGBColor(),
+				colorLight7.value.toRGBColor(),
 				textLightDelay.text.toIntOrNull() ?: pattern.delay ?: 10,
 				textLightWidth.text.toIntOrNull() ?: pattern.width ?: 3,
 				textLightFading.text.toIntOrNull() ?: pattern.fading ?: 0,
 				textLightMin.text.toIntOrNull() ?: pattern.min ?: 0,
 				textLightMax.text.toIntOrNull() ?: pattern.max ?: 255,
 				textLightTimeout.text.toIntOrNull() ?: pattern.timeout ?: INDEFINED,
+				choiceLightRainbow.selectionModel.selectedIndex,
 				true)
 	}
 
